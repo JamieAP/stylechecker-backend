@@ -1,4 +1,4 @@
-== CO600 Group Project (jb695, jtk6, cbag2, ms693)
+# CO600 Group Project (jb695, jtk6, cbag2, ms693)
 
 This is the Java backend of the code style checker for the 1st year module CO320
 
