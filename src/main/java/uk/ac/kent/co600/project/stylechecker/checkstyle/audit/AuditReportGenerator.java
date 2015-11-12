@@ -26,7 +26,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
     }
 
     public String buildReport() {
-        checkState(consumed.compareAndSet(false, true),"This instance has already been used!");
+        checkState(consumed.compareAndSet(false, true), "This instance has already been used!");
         return Joiner.on(System.lineSeparator()).join(stringify(errors.build()));
     }
 
