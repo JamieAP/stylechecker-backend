@@ -20,14 +20,12 @@ public class JarExtractor {
         UUID sessionUuid = UUID.randomUUID();
         JarFile jarFile = saveJarToFs(is, sessionUuid);
 
-        ImmutableList.Builder<String> ignoredFileNames = ImmutableList.builder();
-        ImmutableList.Builder<File> extractedSourceFiles = ImmutableList.builder();
-
-        processEntries(sessionUuid, jarFile, ignoredFileNames, extractedSourceFiles);
-        return ExtractionResult.of(sessionUuid, ignoredFileNames.build(), extractedSourceFiles.build());
+        return processEntries(sessionUuid, jarFile);
     }
 
-    private void processEntries(UUID sessionUuid, JarFile jarFile, ImmutableList.Builder<String> ignoredFileNames, ImmutableList.Builder<File> extractedSourceFiles) throws IOException {
+    private ExtractionResult processEntries(UUID sessionUuid, JarFile jarFile) throws IOException {
+        ImmutableList.Builder<String> ignoredFileNames = ImmutableList.builder();
+        ImmutableList.Builder<File> extractedSourceFiles = ImmutableList.builder();
         for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements();) {
             JarEntry entry = entries.nextElement();
             if (!entry.getName().endsWith(".java")) {
@@ -36,6 +34,7 @@ public class JarExtractor {
                 extractedSourceFiles.add(extractFile(sessionUuid, jarFile, entry));
             }
         }
+        return ExtractionResult.of(sessionUuid, ignoredFileNames.build(), extractedSourceFiles.build());
     }
 
     private JarFile saveJarToFs(InputStream is, UUID sessionUuid) throws IOException {
