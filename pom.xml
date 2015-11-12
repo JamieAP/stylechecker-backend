@@ -22,7 +22,7 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-forms</artifactId>
-            <version>0.9.1</version>
+            <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
             <groupId>com.puppycrawl.tools</groupId>
