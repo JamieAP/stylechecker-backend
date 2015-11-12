@@ -1,7 +1,6 @@
 package uk.ac.kent.co600.project.stylechecker.checkstyle.audit;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.collect.ImmutableList;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
@@ -9,7 +8,6 @@ import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkState;
 
