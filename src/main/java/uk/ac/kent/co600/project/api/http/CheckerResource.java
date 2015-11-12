@@ -59,7 +59,7 @@ public class CheckerResource {
                 errors.add(
                         String.format(
                                 "File %s Line %d Col %d: %s",
-                                event.getSourceName(),
+                                event.getFileName(),
                                 event.getLine(),
                                 event.getColumn(),
                                 event.getMessage()
