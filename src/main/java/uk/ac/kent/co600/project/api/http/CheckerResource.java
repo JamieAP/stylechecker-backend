@@ -1,19 +1,27 @@
 package uk.ac.kent.co600.project.api.http;
 
-import com.puppycrawl.tools.checkstyle.Checker;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import uk.ac.kent.co600.project.jar.ExtractionResult;
+import uk.ac.kent.co600.project.jar.JarExtractor;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Path("/check")
-@Produces("text/plain")
 public class CheckerResource {
 
-    /* TODO implement checker endpoint */
-    @GET
-    public String get(@Context Checker checker) {
-        return "hello world!";
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public void post(
+            @FormDataParam("file") InputStream is,
+            @FormDataParam("file") FormDataBodyPart bodyPart
+    ) throws IOException {
+        ExtractionResult result = new JarExtractor().extract(is);
+        /* TODO check the style of the code*/
     }
 }
