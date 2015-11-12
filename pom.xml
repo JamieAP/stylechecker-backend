@@ -8,9 +8,23 @@
     <artifactId>stylechecker-backend</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <properties>
         <dropwizard.version>0.9.1</dropwizard.version>
         <checkstyle.version>6.12.1</checkstyle.version>
+        <apachecommons.version>2.4</apachecommons.version>
     </properties>
 
     <dependencies>
@@ -28,6 +42,11 @@
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
             <version>${checkstyle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${apachecommons.version}</version>
         </dependency>
     </dependencies>
 
