@@ -1,4 +1,4 @@
-package uk.ac.kent.co600.project;
+package uk.ac.kent.co600.project.stylechecker;
 
 import io.dropwizard.Configuration;
 

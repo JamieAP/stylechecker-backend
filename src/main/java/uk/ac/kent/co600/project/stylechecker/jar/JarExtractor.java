@@ -1,4 +1,4 @@
-package uk.ac.kent.co600.project.jar;
+package uk.ac.kent.co600.project.stylechecker.jar;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;

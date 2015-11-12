@@ -1,4 +1,4 @@
-package uk.ac.kent.co600.project;
+package uk.ac.kent.co600.project.stylechecker;
 
 import com.google.common.base.Throwables;
 import com.puppycrawl.tools.checkstyle.Checker;
@@ -8,8 +8,8 @@ import io.dropwizard.setup.Environment;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.xml.sax.InputSource;
-import uk.ac.kent.co600.project.api.http.CheckerResource;
-import uk.ac.kent.co600.project.jar.JarExtractor;
+import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
+import uk.ac.kent.co600.project.stylechecker.jar.JarExtractor;
 
 public class StylecheckerApplication extends Application<StylecheckerConfiguration> {
 
