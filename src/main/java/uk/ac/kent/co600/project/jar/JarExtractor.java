@@ -55,7 +55,7 @@ public class JarExtractor {
     }
 
     private File extractFile(UUID sessionUuid, JarFile jar, JarEntry entry) throws IOException {
-        java.nio.file.Path fileDest = Files.createTempFile(sessionUuid.toString() + DASH_SEPARATOR + sanitizeFileName(entry), null);
+        java.nio.file.Path fileDest = Files.createTempFile(sessionUuid.toString() + DASH_SEPARATOR + sanitizeFileName(entry), ".java");
         InputStream fileIs = jar.getInputStream(entry);
         FileOutputStream fileOs = new FileOutputStream(fileDest.toFile());
         while (fileIs.available() != 0) {
@@ -65,6 +65,6 @@ public class JarExtractor {
     }
 
     private String sanitizeFileName(JarEntry entry) {
-        return entry.getName().replace(File.pathSeparator, DASH_SEPARATOR);
+        return entry.getName().replace("/", "-").replace(File.pathSeparator, DASH_SEPARATOR);
     }
 }

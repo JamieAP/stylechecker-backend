@@ -1,5 +1,8 @@
 package uk.ac.kent.co600.project.api.http;
 
+import com.puppycrawl.tools.checkstyle.Checker;
+import com.puppycrawl.tools.checkstyle.DefaultLogger;
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import uk.ac.kent.co600.project.jar.ExtractionResult;
@@ -21,9 +24,11 @@ public class CheckerResource {
     public void post(
             @FormDataParam("file") InputStream is,
             @FormDataParam("file") FormDataBodyPart bodyPart,
-            @Context JarExtractor extractor
-    ) throws IOException {
+            @Context JarExtractor extractor,
+            @Context Checker checker
+    ) throws IOException, CheckstyleException {
         ExtractionResult result = extractor.extract(is);
-        /* TODO check the style of the code*/
+        checker.addListener(new DefaultLogger(System.out, true));
+        checker.process(result.getExtractedFiles());
     }
 }

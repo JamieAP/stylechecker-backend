@@ -2,13 +2,21 @@ package uk.ac.kent.co600.project;
 
 import com.google.common.base.Throwables;
 import com.puppycrawl.tools.checkstyle.Checker;
+import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.DefaultConfiguration;
+import com.puppycrawl.tools.checkstyle.PropertiesExpander;
+import com.puppycrawl.tools.checkstyle.api.*;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import uk.ac.kent.co600.project.api.http.CheckerResource;
 import uk.ac.kent.co600.project.jar.JarExtractor;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
+import java.util.SortedSet;
 
 public class StylecheckerApplication extends Application<StylecheckerConfiguration> {
 
@@ -27,11 +35,15 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
         try {
             Checker checker = new Checker();
             checker.setModuleClassLoader(ClassLoader.getSystemClassLoader());
-            checker.configure(new DefaultConfiguration("co320-style"));
+            checker.configure(ConfigurationLoader.loadConfiguration(loadCheckstyleConfiguration(), null, false));
             return checker;
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    private InputStream loadCheckstyleConfiguration() {
+        return ClassLoader.getSystemResourceAsStream("checkstyle-configuration.xml");
     }
 
     private AbstractBinder instanceBindings() {
