@@ -1,5 +1,6 @@
 package uk.ac.kent.co600.project.jar;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -16,24 +17,30 @@ import java.util.jar.JarFile;
 
 public class JarExtractor {
 
+    private static final String JAVA_SOURCE_FILE_EXTENSION = ".java";
+    private static final String TEMPORARY_FILE_PREFIX = "/tmp/";
+    private static final String DASH_SEPARATOR = "-";
+
     public ExtractionResult extract(InputStream is) throws IOException {
         UUID sessionUuid = UUID.randomUUID();
         JarFile jarFile = saveJarToFs(is, sessionUuid);
-
         return processEntries(sessionUuid, jarFile);
     }
 
     private ExtractionResult processEntries(UUID sessionUuid, JarFile jarFile) throws IOException {
         ImmutableList.Builder<String> ignoredFileNames = ImmutableList.builder();
         ImmutableList.Builder<File> extractedSourceFiles = ImmutableList.builder();
+
         for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements();) {
             JarEntry entry = entries.nextElement();
-            if (!entry.getName().endsWith(".java")) {
-                ignoredFileNames.add(entry.getName());
+            String entryName = entry.getName();
+            if (Strings.isNullOrEmpty(entryName) || !entryName.endsWith(JAVA_SOURCE_FILE_EXTENSION)) {
+                ignoredFileNames.add(entryName);
             } else {
                 extractedSourceFiles.add(extractFile(sessionUuid, jarFile, entry));
             }
         }
+
         return ExtractionResult.of(
                 sessionUuid,
                 ignoredFileNames.build(),
@@ -42,13 +49,13 @@ public class JarExtractor {
     }
 
     private JarFile saveJarToFs(InputStream is, UUID sessionUuid) throws IOException {
-        Path tempPathForJar = Paths.get("/tmp/" + sessionUuid.toString());
+        Path tempPathForJar = Paths.get(TEMPORARY_FILE_PREFIX + sessionUuid.toString());
         Files.copy(is, tempPathForJar);
         return new JarFile(tempPathForJar.toFile());
     }
 
     private File extractFile(UUID sessionUuid, JarFile jar, JarEntry entry) throws IOException {
-        java.nio.file.Path fileDest = Files.createTempFile(sessionUuid.toString() + "-" + sanitizeFileName(entry), null);
+        java.nio.file.Path fileDest = Files.createTempFile(sessionUuid.toString() + DASH_SEPARATOR + sanitizeFileName(entry), null);
         InputStream fileIs = jar.getInputStream(entry);
         FileOutputStream fileOs = new FileOutputStream(fileDest.toFile());
         while (fileIs.available() != 0) {
@@ -58,6 +65,6 @@ public class JarExtractor {
     }
 
     private String sanitizeFileName(JarEntry entry) {
-        return entry.getName().replace("/", "-").replace(File.pathSeparator, "-");
+        return entry.getName().replace(File.pathSeparator, DASH_SEPARATOR);
     }
 }
