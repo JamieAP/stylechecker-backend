@@ -34,7 +34,11 @@ public class JarExtractor {
                 extractedSourceFiles.add(extractFile(sessionUuid, jarFile, entry));
             }
         }
-        return ExtractionResult.of(sessionUuid, ignoredFileNames.build(), extractedSourceFiles.build());
+        return ExtractionResult.of(
+                sessionUuid,
+                ignoredFileNames.build(),
+                extractedSourceFiles.build()
+        );
     }
 
     private JarFile saveJarToFs(InputStream is, UUID sessionUuid) throws IOException {

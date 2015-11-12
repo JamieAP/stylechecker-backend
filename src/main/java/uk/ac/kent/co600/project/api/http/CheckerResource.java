@@ -8,6 +8,7 @@ import uk.ac.kent.co600.project.jar.JarExtractor;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +20,10 @@ public class CheckerResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public void post(
             @FormDataParam("file") InputStream is,
-            @FormDataParam("file") FormDataBodyPart bodyPart
+            @FormDataParam("file") FormDataBodyPart bodyPart,
+            @Context JarExtractor extractor
     ) throws IOException {
-        ExtractionResult result = new JarExtractor().extract(is);
+        ExtractionResult result = extractor.extract(is);
         /* TODO check the style of the code*/
     }
 }
