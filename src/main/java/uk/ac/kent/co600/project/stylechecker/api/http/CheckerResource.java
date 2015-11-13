@@ -31,14 +31,14 @@ public class CheckerResource {
             @Context JarExtractor extractor,
             @Context Checker checker
     ) throws IOException, CheckstyleException {
-        ExtractionResult result = extractor.extract(is);
+        ExtractionResult extractionResult = extractor.extract(is);
         AuditReportGenerator auditor = new AuditReportGenerator();
         checker.addListener(auditor);
-        ImmutableList<File> files = result.getExtractedFiles().stream()
+        ImmutableList<File> files = extractionResult.getExtractedFiles().stream()
                 .map(ExtractedFile::getFile)
                 .collect(ImmutableCollectors.toList());
         checker.process(files);
         files.forEach(File::delete);
-        return auditor.buildReport(result.mapPathsToFiles());
+        return auditor.buildReport(extractionResult.mapPathsToFiles());
     }
 }

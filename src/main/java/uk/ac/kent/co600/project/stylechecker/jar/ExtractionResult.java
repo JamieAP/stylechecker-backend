@@ -1,7 +1,8 @@
 package uk.ac.kent.co600.project.stylechecker.jar;
 
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
 public class ExtractionResult {
 
@@ -21,12 +22,9 @@ public class ExtractionResult {
         return extractedFiles;
     }
 
-    public ImmutableBiMap<String, ExtractedFile> mapPathsToFiles() {
-        ImmutableBiMap.Builder<String, ExtractedFile> builder = ImmutableBiMap.builder();
-        for (ExtractedFile file : extractedFiles) {
-            builder.put(file.getFile().getAbsolutePath(), file);
-        }
-        return builder.build();
+    public ImmutableMap<String, ExtractedFile> mapPathsToFiles() {
+        return extractedFiles.stream()
+                .collect(ImmutableCollectors.toMap(f -> f.getFile().getAbsolutePath(), f -> f));
     }
 
     public static ExtractionResult of(Iterable<String> ignoredFiles, Iterable<ExtractedFile> extractedFiles) {

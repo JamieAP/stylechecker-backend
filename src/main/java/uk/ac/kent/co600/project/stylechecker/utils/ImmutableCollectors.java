@@ -1,6 +1,10 @@
 package uk.ac.kent.co600.project.stylechecker.utils;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.stream.Collector;
 
@@ -14,4 +18,17 @@ public class ImmutableCollectors {
                 ImmutableList.Builder::build
         );
     }
+
+    public static <T, K, V> Collector<T, ImmutableMap.Builder<K, V>, ImmutableMap<K, V>> toMap(
+            Function<T, K> keyFunction, Function<T, V> valueFunction) {
+        return Collector.of(
+                ImmutableMap.Builder::new,
+                (builder, t) -> builder.put(
+                        keyFunction.apply(t), valueFunction.apply(t)
+                ),
+                (b1, b2) -> b1.putAll(b2.build()),
+                ImmutableMap.Builder::build
+        );
+    }
 }
+
