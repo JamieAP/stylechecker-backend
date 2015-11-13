@@ -44,6 +44,11 @@ public class CheckerResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response get() {
-        return Response.ok("hello!").build();
+        return Response.ok("\n" +
+                "<form action=\"http://localhost:8080/check\" method=\"post\" enctype=\"multipart/form-data\">\n" +
+                "    Select file to upload:\n" +
+                "    <input type=\"file\" name=\"file\" id=\"file\">\n" +
+                "    <input type=\"submit\" value=\"Upload File\" name=\"submit\">\n" +
+                "</form>").build();
     }
 }
