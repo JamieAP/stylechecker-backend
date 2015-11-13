@@ -11,11 +11,10 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.JarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,5 +39,11 @@ public class CheckerResource {
         checker.process(files);
         files.forEach(File::delete);
         return auditor.buildReport(extractionResult.mapPathsToFiles());
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public Response get() {
+        return Response.ok("hello!").build();
     }
 }
