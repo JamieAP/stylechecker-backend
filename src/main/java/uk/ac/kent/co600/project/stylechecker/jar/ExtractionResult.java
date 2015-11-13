@@ -1,10 +1,7 @@
 package uk.ac.kent.co600.project.stylechecker.jar;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
-
-import java.io.File;
 
 public class ExtractionResult {
 
