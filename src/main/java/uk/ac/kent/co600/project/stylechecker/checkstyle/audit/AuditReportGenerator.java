@@ -1,6 +1,7 @@
 package uk.ac.kent.co600.project.stylechecker.checkstyle.audit;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
@@ -21,8 +22,14 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
     private final ImmutableList.Builder<AuditEvent> errors = ImmutableList.builder();
     private final AtomicBoolean consumed = new AtomicBoolean(false);
 
+    @Override
     public void addError(AuditEvent event) {
          errors.add(event);
+    }
+
+    @Override
+    public void addException(AuditEvent event, Throwable throwable) {
+        Throwables.propagate(throwable);
     }
 
     public String buildReport() {

@@ -9,23 +9,19 @@ import com.puppycrawl.tools.checkstyle.api.AuditListener;
  */
 public abstract class ErrorOnlyAuditListener implements AuditListener {
 
-    public void auditStarted(AuditEvent event) {
+    public final void auditStarted(AuditEvent event) {
 
     }
 
-    public void auditFinished(AuditEvent event) {
+    public final void auditFinished(AuditEvent event) {
 
     }
 
-    public void fileStarted(AuditEvent event) {
+    public final void fileStarted(AuditEvent event) {
 
     }
 
-    public void fileFinished(AuditEvent event) {
-
-    }
-
-    public void addException(AuditEvent event, Throwable throwable) {
+    public final void fileFinished(AuditEvent event) {
 
     }
 }
