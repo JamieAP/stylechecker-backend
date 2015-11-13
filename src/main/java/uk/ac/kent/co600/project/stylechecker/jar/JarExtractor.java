@@ -29,7 +29,7 @@ public class JarExtractor {
 
     private ExtractionResult processEntries(UUID sessionUuid, JarFile jarFile) throws IOException {
         ImmutableList.Builder<String> ignoredFileNames = ImmutableList.builder();
-        ImmutableList.Builder<File> extractedSourceFiles = ImmutableList.builder();
+        ImmutableList.Builder<ExtractedFile> extractedSourceFiles = ImmutableList.builder();
 
         for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements();) {
             JarEntry entry = entries.nextElement();
@@ -41,11 +41,7 @@ public class JarExtractor {
             }
         }
 
-        return ExtractionResult.of(
-                sessionUuid,
-                ignoredFileNames.build(),
-                extractedSourceFiles.build()
-        );
+        return ExtractionResult.of(ignoredFileNames.build(), extractedSourceFiles.build());
     }
 
     private JarFile saveJarToFs(InputStream is, UUID sessionUuid) throws IOException {
@@ -54,14 +50,14 @@ public class JarExtractor {
         return new JarFile(tempPathForJar.toFile());
     }
 
-    private File extractFile(UUID sessionUuid, JarFile jar, JarEntry entry) throws IOException {
+    private ExtractedFile extractFile(UUID sessionUuid, JarFile jar, JarEntry entry) throws IOException {
         java.nio.file.Path fileDest = Files.createTempFile(sessionUuid.toString() + DASH_SEPARATOR + sanitizeFileName(entry), ".java");
         InputStream fileIs = jar.getInputStream(entry);
         FileOutputStream fileOs = new FileOutputStream(fileDest.toFile());
         while (fileIs.available() != 0) {
             fileOs.write(fileIs.read());
         }
-        return fileDest.toFile();
+        return ExtractedFile.of(fileDest.toFile(), entry.getName());
     }
 
     private String sanitizeFileName(JarEntry entry) {
