@@ -37,7 +37,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
 
     public String buildReport(Map<String, ExtractedFile> pathToFile) {
         checkState(consumed.compareAndSet(false, true), "This instance has already been used!");
-        return Joiner.on(System.lineSeparator()).join(stringify(errors.build(), pathToFile));
+        return Joiner.on("<br/>").join(stringify(errors.build(), pathToFile));
     }
 
     private ImmutableList<String> stringify(List<AuditEvent> errors, Map<String, ExtractedFile> pathToFile) {
