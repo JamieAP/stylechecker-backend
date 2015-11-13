@@ -2,9 +2,11 @@ package uk.ac.kent.co600.project.stylechecker.checkstyle.audit;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
+import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -32,21 +34,21 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
         Throwables.propagate(throwable);
     }
 
-    public String buildReport() {
+    public String buildReport(ImmutableBiMap<String, ExtractedFile> pathToFile) {
         checkState(consumed.compareAndSet(false, true), "This instance has already been used!");
-        return Joiner.on(System.lineSeparator()).join(stringify(errors.build()));
+        return Joiner.on(System.lineSeparator()).join(stringify(errors.build(), pathToFile));
     }
 
-    private ImmutableList<String> stringify(ImmutableList<AuditEvent> errors) {
+    private ImmutableList<String> stringify(ImmutableList<AuditEvent> errors, ImmutableBiMap<String, ExtractedFile> pathToFile) {
         return errors.stream()
-                .map(this::eventToString)
+                .map(e -> eventToString(e, pathToFile))
                 .collect(ImmutableCollectors.toList());
     }
 
-    private String eventToString(AuditEvent event) {
+    private String eventToString(AuditEvent event, ImmutableBiMap<String, ExtractedFile> pathToFile) {
         return String.format(
                 "File %s Line %d Col %d: %s",
-                event.getFileName(),
+                pathToFile.get(event.getFileName()).getFriendlyFileName(),
                 event.getLine(),
                 event.getColumn(),
                 event.getMessage()

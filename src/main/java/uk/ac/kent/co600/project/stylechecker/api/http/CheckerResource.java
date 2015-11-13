@@ -39,6 +39,6 @@ public class CheckerResource {
                 .collect(ImmutableCollectors.toList());
         checker.process(files);
         files.forEach(File::delete);
-        return auditor.buildReport();
+        return auditor.buildReport(result.mapPathsToFiles());
     }
 }
