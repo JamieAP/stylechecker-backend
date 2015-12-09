@@ -25,7 +25,7 @@ public class CheckerFactory {
         }
     }
 
-    public Integer numberOfChecks() {
+    public Integer getNumberOfChecks() {
         return checkstyleConf.getChildren()[0].getChildren().length;
     }
 }
