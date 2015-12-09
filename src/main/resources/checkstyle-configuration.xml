@@ -3,39 +3,63 @@
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 <module name="Checker">
     <module name="TreeWalker">
+        <!-- 1.2 Class names start with a capital letter. -->
         <module name="TypeName"/>
+        <!-- 1.4 Method and variable names start with lowercase letters. -->
         <module name="MethodName"/>
+        <!-- 1.4 Method and variable names start with lowercase letters. -->
+        <module name="MemberName"/>
+        <!-- 1.5 Constants are written in UPPERCASE. -->
         <module name="ConstantName"/>
+        <!-- 2.2 All statements within a block are indented one level. -->
+        <!-- 2.1 One level of indentation is four spaces. -->
         <module name="Indentation"/>
-        <module name="NeedBraces"/>
-        <module name="DeclarationOrder"/>
-        <module name="LeftCurly">
-            <property name="option" value="eol"/>
+        <!-- 4.5 Always include a constructor (even if the body is empty).-->
+        <module name="MissingCtor"/>
+        <!-- 2.5 Always use braces in control structures. -->
+        <module name="NeedBraces">
             <property name="tokens"
-                      value="INTERFACE_DEF,CLASS_DEF,ANNOTATION_DEF,ENUM_DEF,CTOR_DEF,METHOD_DEF,ENUM_CONSTANT_DEF"/>
+                      value="LITERAL_DO,LITERAL_ELSE,LITERAL_FOR,LITERAL_IF,LITERAL_WHILE,LITERAL_CASE,LITERAL_DEFAULT"/>
         </module>
+        <!-- 4.1 Order of declarations: fields, constructors, methods. -->
+        <module name="DeclarationOrder"/>
+        <!-- 2.3 Braces for classes and methods are alone on one line. -->
         <module name="LeftCurly">
             <property name="option" value="nl"/>
             <property name="tokens"
+                      value="INTERFACE_DEF,CLASS_DEF,ANNOTATION_DEF,ENUM_DEF,CTOR_DEF,METHOD_DEF,ENUM_CONSTANT_DEF"/>
+        </module>
+        <!-- 2.4 For all other blocks, braces open at the end of a line. -->
+        <module name="LeftCurly">
+            <property name="option" value="eol"/>
+            <property name="tokens"
                       value="LITERAL_WHILE,LITERAL_TRY,LITERAL_CATCH,LITERAL_FINALLY,LITERAL_SYNCHRONIZED,LITERAL_SWITCH,LITERAL_DO,LITERAL_IF,LITERAL_ELSE,LITERAL_FOR,STATIC_INIT,OBJBLOCK"/>
         </module>
+        <!-- 2.7 Use a space around operators. -->
+        <!-- 2.6 Use a space before the opening brace of a control structure's block. -->
         <module name="WhitespaceAround">
             <property name="tokens"
                       value="LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_SWITCH,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,DO_WHILE,EQUAL,GE,GT,LAND,DIV,DIV_ASSIGN,ASSIGN,BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,LOR,LT,MINUS,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS,PLUS_ASSIGN,QUESTION,RCURLY,SL,SLIST,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,GENERIC_START,GENERIC_END"/>
         </module>
+        <!-- 2.8 Use a blank line between methods (and constructors). -->
         <module name="EmptyLineSeparator">
             <property name="tokens" value="METHOD_DEF,CTOR_DEF"/>
         </module>
+        <!-- 3.1 Every class has a class comment at the top. -->
         <module name="JavadocType">
             <property name="scope" value="private"/>
             <property name="authorFormat" value="\S+"/>
             <property name="versionFormat" value="\S+"/>
         </module>
+        <!-- 3.2 Every method has a method comment. -->
         <module name="JavadocMethod">
             <property name="scope" value="private"/>
         </module>
+        <!-- 4.4 Import classes separately. -->
         <module name="AvoidStarImport">
             <property name="allowStaticMemberImports" value="true"/>
         </module>
+        <!-- 4.2 Fields may not be public (except for final fields). -->
+        <module name="VisibilityModifier"/>
     </module>
 </module>
