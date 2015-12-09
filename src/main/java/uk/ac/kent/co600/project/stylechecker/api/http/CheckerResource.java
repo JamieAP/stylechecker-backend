@@ -5,6 +5,7 @@ import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAudit;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditReportGenerator;
@@ -27,7 +28,7 @@ public class CheckerResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public ImmutableList<FileAudit> post(
+    public AuditReport post(
             @FormDataParam("file") InputStream is,
             @FormDataParam("file") FormDataBodyPart bodyPart,
             @Context JarExtractor extractor,
@@ -35,7 +36,7 @@ public class CheckerResource {
     ) throws IOException, CheckstyleException {
         Checker checker = checkerFactory.createChecker();
         ExtractionResult extractionResult = extractor.extract(is);
-        AuditReportGenerator auditor = new AuditReportGenerator();
+        AuditReportGenerator auditor = new AuditReportGenerator(checkerFactory.numberOfChecks());
         checker.addListener(auditor);
         ImmutableList<File> files = extractionResult.getExtractedFiles().stream()
                 .map(ExtractedFile::getFile)

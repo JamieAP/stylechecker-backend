@@ -24,4 +24,8 @@ public class CheckerFactory {
             throw Throwables.propagate(e);
         }
     }
+
+    public Integer numberOfChecks() {
+        return checkstyleConf.getChildren()[0].getChildren().length;
+    }
 }
