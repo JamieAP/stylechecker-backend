@@ -54,7 +54,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
         );
     }
 
-    public static AuditReport score(
+    private AuditReport score(
             Integer numberOfChecks,
             Iterable<FileAudit> auditedFiles,
             Iterable<String> ignoredFiles
@@ -67,13 +67,13 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
 
         Long uniqueFailedChecks = checkNames.stream().distinct().count();
         Integer failuresTotal = checkNames.size();
-        return AuditReport.of(
-                numberOfChecks,
-                uniqueFailedChecks.intValue(),
-                failuresTotal,
-                fileAudits,
-                ignoredFiles
-        );
+        return AuditReport.newBuilder()
+                .withNumberOfChecks(numberOfChecks)
+                .withUniqueFailedChecks(uniqueFailedChecks.intValue())
+                .withTotalFailedChecks(failuresTotal)
+                .withFileAudits(fileAudits)
+                .withIgnoredFiles(ignoredFiles)
+                .build();
     }
 
     private ImmutableList<FileAudit> mapEventsToFileAudits(

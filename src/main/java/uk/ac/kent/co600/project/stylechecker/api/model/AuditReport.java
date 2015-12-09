@@ -24,6 +24,10 @@ public class AuditReport {
         this.ignoredFiles = ImmutableList.copyOf(ignoredFiles);
     }
 
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
     public Integer getNumberOfChecks() {
         return numberOfChecks;
     }
@@ -44,19 +48,49 @@ public class AuditReport {
         return ignoredFiles;
     }
 
-    public static AuditReport of(
-            Integer numberOfChecks,
-            Integer uniqueFailedChecks,
-            Integer totalFailedChecks,
-            ImmutableList<FileAudit> fileAudits,
-            Iterable<String> ignoredFiles
-    ) {
-        return new AuditReport(
-                numberOfChecks,
-                uniqueFailedChecks,
-                totalFailedChecks,
-                fileAudits,
-                ignoredFiles
-        );
+    public static final class Builder {
+        private ImmutableList<FileAudit> fileAudits;
+        private Integer numberOfChecks;
+        private Integer uniqueFailedChecks;
+        private Integer totalFailedChecks;
+        private Iterable<String> ignoredFiles;
+
+        private Builder() {
+        }
+
+        public Builder withFileAudits(ImmutableList<FileAudit> val) {
+            fileAudits = val;
+            return this;
+        }
+
+        public Builder withNumberOfChecks(Integer val) {
+            numberOfChecks = val;
+            return this;
+        }
+
+        public Builder withUniqueFailedChecks(Integer val) {
+            uniqueFailedChecks = val;
+            return this;
+        }
+
+        public Builder withTotalFailedChecks(Integer val) {
+            totalFailedChecks = val;
+            return this;
+        }
+
+        public Builder withIgnoredFiles(Iterable<String> val) {
+            ignoredFiles = val;
+            return this;
+        }
+
+        public AuditReport build() {
+            return new AuditReport(
+                    numberOfChecks,
+                    uniqueFailedChecks,
+                    totalFailedChecks,
+                    fileAudits,
+                    ignoredFiles
+            );
+        }
     }
 }
