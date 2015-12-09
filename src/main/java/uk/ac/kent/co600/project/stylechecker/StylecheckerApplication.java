@@ -3,12 +3,15 @@ package uk.ac.kent.co600.project.stylechecker;
 import com.google.common.base.Throwables;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
+import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.puppycrawl.tools.checkstyle.api.Configuration;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.xml.sax.InputSource;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.jar.JarExtractor;
 
 public class StylecheckerApplication extends Application<StylecheckerConfiguration> {
@@ -26,16 +29,16 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
         env.jersey().register(instanceBindings());
     }
 
-    private Checker initializeCheckstyle() {
+    private CheckerFactory createCheckerFactory() {
         try {
             InputSource checkstyleConfigXml = new InputSource(
-                    ClassLoader.getSystemResourceAsStream(CHECKSTYLE_CONFIG_FILE_NAME)
+                ClassLoader.getSystemResourceAsStream(CHECKSTYLE_CONFIG_FILE_NAME)
             );
-            Checker checker = new Checker();
-            checker.setModuleClassLoader(ClassLoader.getSystemClassLoader());
-            checker.configure(ConfigurationLoader.loadConfiguration(checkstyleConfigXml, null, true));
-            return checker;
-        } catch (Exception e) {
+            Configuration checkstyleConfig = ConfigurationLoader.loadConfiguration(
+                    checkstyleConfigXml, null, true
+            );
+            return new CheckerFactory(checkstyleConfig);
+        } catch (CheckstyleException e) {
             throw Throwables.propagate(e);
         }
     }
@@ -44,7 +47,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
         return new AbstractBinder() {
             @Override protected void configure() {
                 bind(new JarExtractor()).to(JarExtractor.class);
-                bind(initializeCheckstyle()).to(Checker.class);
+                bind(createCheckerFactory()).to(CheckerFactory.class);
             }
         };
     }
