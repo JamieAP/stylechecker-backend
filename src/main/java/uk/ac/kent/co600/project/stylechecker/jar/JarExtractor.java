@@ -7,9 +7,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.FileAttribute;
 import java.util.Enumeration;
 import java.util.UUID;
 import java.util.jar.JarEntry;
@@ -18,8 +18,9 @@ import java.util.jar.JarFile;
 public class JarExtractor {
 
     private static final String JAVA_SOURCE_FILE_EXTENSION = ".java";
-    private static final String TEMPORARY_FILE_PREFIX = "/tmp/";
+    private static final String JAR_FILE_EXTENSION = ".jar";
     private static final String DASH_SEPARATOR = "-";
+    private static final Path TEMP_DIR = Paths.get(System.getProperty("java.io.tmpdir"));
 
     public ExtractionResult extract(InputStream is) throws IOException {
         UUID sessionUuid = UUID.randomUUID();
@@ -45,8 +46,8 @@ public class JarExtractor {
     }
 
     private JarFile saveJarToFs(InputStream is, UUID sessionUuid) throws IOException {
-        Path tempPathForJar = Paths.get(TEMPORARY_FILE_PREFIX + sessionUuid.toString());
-        Files.copy(is, tempPathForJar);
+        Path tempPathForJar = Files.createTempFile(TEMP_DIR, sessionUuid.toString(), JAR_FILE_EXTENSION);
+        Files.copy(is, tempPathForJar, StandardCopyOption.REPLACE_EXISTING);
         return new JarFile(tempPathForJar.toFile());
     }
 
