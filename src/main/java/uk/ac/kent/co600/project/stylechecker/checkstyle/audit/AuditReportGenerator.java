@@ -5,11 +5,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
-import uk.ac.kent.co600.project.stylechecker.AuditScorer;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAudit;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
+import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -45,9 +45,35 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
         Throwables.propagate(throwable);
     }
 
-    public AuditReport buildReport(Map<String, ExtractedFile> pathToFile) {
+    public AuditReport buildReport(ExtractionResult files) {
         checkState(consumed.compareAndSet(false, true), "This instance has already been used!");
-        return AuditScorer.score(numberOfChecks, mapEventsToFileAudits(errors.build(), pathToFile));
+        return score(
+                numberOfChecks,
+                mapEventsToFileAudits(errors.build(), files.mapPathsToFiles()),
+                files.getIgnoredFiles()
+        );
+    }
+
+    public static AuditReport score(
+            Integer numberOfChecks,
+            Iterable<FileAudit> auditedFiles,
+            Iterable<String> ignoredFiles
+    ) {
+        ImmutableList<FileAudit> fileAudits = ImmutableList.copyOf(auditedFiles);
+        ImmutableList<String> checkNames = fileAudits.stream()
+                .flatMap(e -> e.getAuditEntries().stream())
+                .map(FileAuditEntry::getCheckClassName)
+                .collect(ImmutableCollectors.toList());
+
+        Long uniqueFailedChecks = checkNames.stream().distinct().count();
+        Integer failuresTotal = checkNames.size();
+        return AuditReport.of(
+                numberOfChecks,
+                uniqueFailedChecks.intValue(),
+                failuresTotal,
+                fileAudits,
+                ignoredFiles
+        );
     }
 
     private ImmutableList<FileAudit> mapEventsToFileAudits(

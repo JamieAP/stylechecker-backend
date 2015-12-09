@@ -42,14 +42,14 @@ public class CheckerResource {
                 .collect(ImmutableCollectors.toList());
         checker.process(files);
         files.forEach(File::delete);
-        return auditor.buildReport(extractionResult.mapPathsToFiles());
+        return auditor.buildReport(extractionResult);
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public Response get() {
         return Response.ok("\n" +
-                "<form action=\"http://localhost:8080/check\" method=\"post\" enctype=\"multipart/form-data\">\n" +
+                "<form action=\"http://jamiep.net/check\" method=\"post\" enctype=\"multipart/form-data\">\n" +
                 "    Select file to upload:\n" +
                 "    <input type=\"file\" name=\"file\" id=\"file\">\n" +
                 "    <input type=\"submit\" value=\"Upload File\" name=\"submit\">\n" +
