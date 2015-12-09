@@ -54,23 +54,23 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
             List<AuditEvent> errors,
             Map<String, ExtractedFile> pathToFile
     ) {
-        ImmutableListMultimap<String, FileAuditEntry> filePathToEvents = groupEventsByFile(
+        ImmutableListMultimap<ExtractedFile, FileAuditEntry> fileToEvents = groupEventsByFile(
                 errors,
                 pathToFile
         );
-        return filePathToEvents.keySet().stream()
-                .map(file -> new FileAudit(file, filePathToEvents.get(file)))
+        return fileToEvents.keySet().stream()
+                .map(file -> new FileAudit(file.getFriendlyFileName(), fileToEvents.get(file)))
                 .collect(ImmutableCollectors.toList());
     }
 
-    private ImmutableListMultimap<String, FileAuditEntry> groupEventsByFile(
+    private ImmutableListMultimap<ExtractedFile, FileAuditEntry> groupEventsByFile(
             List<AuditEvent> errors,
             Map<String, ExtractedFile> pathToFile
     ) {
         return errors.stream()
                 .collect(
                         ImmutableCollectors.toListMultiMap(
-                                e -> pathToFile.get(e.getFileName()).getFriendlyFileName(),
+                                e -> pathToFile.get(e.getFileName()),
                                 e -> FileAuditEntry.of(e.getMessage(), e.getLine(), e.getColumn(), e.getSourceName())
                         )
                 );
