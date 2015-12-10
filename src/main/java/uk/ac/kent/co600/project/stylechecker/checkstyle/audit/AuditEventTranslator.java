@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
+import com.puppycrawl.tools.checkstyle.api.Check;
 import com.puppycrawl.tools.checkstyle.api.LocalizedMessage;
 import com.puppycrawl.tools.checkstyle.checks.blocks.LeftCurlyCheck;
 import com.puppycrawl.tools.checkstyle.checks.blocks.NeedBracesCheck;
@@ -50,7 +51,7 @@ import java.util.function.BiFunction;
  */
 public class AuditEventTranslator {
 
-    private static final ImmutableMap<Class<?>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> TRANSLATORS =
+    private static final ImmutableMap<Class<? extends Check>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> TRANSLATORS =
             createTranslators();
     private static final String SOURCE_CLASS_FIELD_NAME = "sourceClass";
     private static final String KEY_FIELD_NAME = "key";
@@ -123,8 +124,8 @@ public class AuditEventTranslator {
         and a {@link BiFunction} that knows how to turn an {@link AuditEvent} produced by that check
         and the {@link ExtractedFile} the source came from into a {@link FileAuditEntry}
      */
-    private static ImmutableMap<Class<?>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> createTranslators() {
-        ImmutableMap.Builder<Class<?>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> builder = ImmutableMap.builder();
+    private static ImmutableMap<Class<? extends Check>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> createTranslators() {
+        ImmutableMap.Builder<Class<? extends Check>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> builder = ImmutableMap.builder();
         builder.put(
                 TypeNameCheck.class,
                 (e, f) -> toAuditEntry("1.2 Class names start with a capital letter", e, f)
