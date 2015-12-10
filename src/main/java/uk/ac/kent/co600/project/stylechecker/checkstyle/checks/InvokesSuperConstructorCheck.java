@@ -4,6 +4,12 @@ import com.puppycrawl.tools.checkstyle.api.Check;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
+/**
+ * A check that checks any constructor of a subclass either calls into another constructor
+ * of the same class, or calls the super constructor of its superclass.
+ *
+ * If none of a class's constructors call into a superclass constructor, it will log an error.
+ */
 public class InvokesSuperConstructorCheck extends Check {
 
     public static final String KEY = "missing.superCtorCall";
