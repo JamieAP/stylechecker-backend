@@ -33,17 +33,17 @@ import java.util.function.BiFunction;
  * A class that translates a {@link com.puppycrawl.tools.checkstyle.Checker}'s {@link AuditEvent}s into our model.
  * A part of this process is to map {@link com.puppycrawl.tools.checkstyle.api.Check}s to the
  * Objects First style guide.
- *
+ * <p>
  * Due to some CheckStyle Checks mapping to more than one of Object First's rules we have to
  * use reflection to extract certain discriminating information from the {@link LocalizedMessage}
  * carried by each {@link AuditEvent} as its not exposed by the API.
- *
+ * <p>
  * Most checks can be matched to a style guide rule by the {@link Class} of the check alone.
- *
+ * <p>
  * Some checks are matched through a combination of the {@link Class} of the check and the message
  * key the check erred with. This message key normally tells CheckStyle which message to display
  * but here it also helps us identify the error case and map it to one of our rules.
- *
+ * <p>
  * Finally some checks are matched through a combination of the {@link Class} of the check and the
  * arguments the check used. For example, the WhitespaceAround check will error with an argument
  * of '{' if there is whitespace missing from a left curly brace. This tells us which of our two
@@ -60,18 +60,18 @@ public class AuditEventTranslator {
     private static final String LEFT_CURLY = "{";
 
     public static FileAuditEntry translate(AuditEvent checkResult, ExtractedFile file) {
+        return TRANSLATORS.get(checkClassOf(checkResult)).apply(checkResult, file);
+    }
+
+    private static Class<? extends Check> checkClassOf(AuditEvent checkResult) {
         try {
-            return TRANSLATORS.get(checkClassOf(checkResult)).apply(checkResult, file);
+            LocalizedMessage msg = checkResult.getLocalizedMessage();
+            Field sourceClass = msg.getClass().getDeclaredField(SOURCE_CLASS_FIELD_NAME);
+            sourceClass.setAccessible(true);
+            return (Class) sourceClass.get(msg);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    private static Class<?> checkClassOf(AuditEvent checkResult) throws NoSuchFieldException, IllegalAccessException {
-        LocalizedMessage msg = checkResult.getLocalizedMessage();
-        Field sourceClass = msg.getClass().getDeclaredField(SOURCE_CLASS_FIELD_NAME);
-        sourceClass.setAccessible(true);
-        return (Class) sourceClass.get(msg);
     }
 
     private static String checkKeyOf(AuditEvent e) {
@@ -120,9 +120,9 @@ public class AuditEventTranslator {
     }
 
     /**
-        Provides the mapping between {@link com.puppycrawl.tools.checkstyle.api.Check} classes
-        and a {@link BiFunction} that knows how to turn an {@link AuditEvent} produced by that check
-        and the {@link ExtractedFile} the source came from into a {@link FileAuditEntry}
+     * Provides the mapping between {@link com.puppycrawl.tools.checkstyle.api.Check} classes
+     * and a {@link BiFunction} that knows how to turn an {@link AuditEvent} produced by that check
+     * and the {@link ExtractedFile} the source came from into a {@link FileAuditEntry}
      */
     private static ImmutableMap<Class<? extends Check>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> createTranslators() {
         ImmutableMap.Builder<Class<? extends Check>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> builder = ImmutableMap.builder();
