@@ -61,6 +61,7 @@
         </module>
         <!-- 4.2 Fields may not be public (except for final fields). -->
         <module name="VisibilityModifier"/>
+        <!-- 4.6 Always include superclass constructor call. -->
         <module name="uk.ac.kent.co600.project.stylechecker.checkstyle.checks.InvokesSuperConstructorCheck"/>
     </module>
 </module>

@@ -26,11 +26,12 @@ public class InvokesSuperConstructorCheck extends Check {
     @Override
     public void visitToken(DetailAST ast) {
         boolean invokesSuperCtor = ast.branchContains(TokenTypes.SUPER_CTOR_CALL);
+        boolean invokesOtherCtor = ast.branchContains(TokenTypes.CTOR_CALL);
         DetailAST classDef = ast.getParent().getParent();
         DetailAST modifiers = classDef.findFirstToken(TokenTypes.MODIFIERS);
         boolean isAbstract = modifiers.branchContains(TokenTypes.ABSTRACT);
         boolean isSubClass = classDef.branchContains(TokenTypes.EXTENDS_CLAUSE);
-        if (isSubClass && !isAbstract && !invokesSuperCtor) {
+        if (isSubClass && !isAbstract && !invokesSuperCtor && !invokesOtherCtor) {
             log(ast.getLineNo(), KEY);
         }
     }
