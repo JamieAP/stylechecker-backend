@@ -68,7 +68,7 @@ public class AuditEventTranslator {
             LocalizedMessage msg = checkResult.getLocalizedMessage();
             Field sourceClass = msg.getClass().getDeclaredField(SOURCE_CLASS_FIELD_NAME);
             sourceClass.setAccessible(true);
-            return (Class) sourceClass.get(msg);
+            return (Class<? extends Check>) sourceClass.get(msg);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
