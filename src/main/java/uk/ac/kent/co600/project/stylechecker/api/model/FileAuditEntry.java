@@ -1,25 +1,30 @@
 package uk.ac.kent.co600.project.stylechecker.api.model;
 
+import com.google.common.collect.ImmutableList;
+
 public class FileAuditEntry {
 
     private final Integer column;
     private final Integer line;
     private final String styleGuideRule;
     private final String checkClassName;
-    private final String checkErrorMessge;
+    private final String checkErrorMessage;
+    private final FileSnippet lines;
 
     public FileAuditEntry(
             String styleGuideRule,
             Integer line,
             Integer column,
             String checkClassName,
-            String checkErrorMessge
+            String checkErrorMessage,
+            FileSnippet lines
     ) {
         this.styleGuideRule = styleGuideRule;
         this.line = line;
         this.column = column;
         this.checkClassName = checkClassName;
-        this.checkErrorMessge = checkErrorMessge;
+        this.checkErrorMessage = checkErrorMessage;
+        this.lines = lines;
     }
 
     public Integer getColumn() {
@@ -38,8 +43,12 @@ public class FileAuditEntry {
         return checkClassName;
     }
 
-    public String getCheckErrorMessge() {
-        return checkErrorMessge;
+    public String getCheckErrorMessage() {
+        return checkErrorMessage;
+    }
+
+    public FileSnippet getLines() {
+        return lines;
     }
 
     public static FileAuditEntry of(
@@ -47,8 +56,9 @@ public class FileAuditEntry {
             Integer line,
             Integer col,
             String checkClassName,
-            String checkErrorMessge
+            String checkErrorMessage,
+            FileSnippet lines
     ) {
-        return new FileAuditEntry(msg, line, col, checkClassName, checkErrorMessge);
+        return new FileAuditEntry(msg, line, col, checkClassName, checkErrorMessage, lines);
     }
 }

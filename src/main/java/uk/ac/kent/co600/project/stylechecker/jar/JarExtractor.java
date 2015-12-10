@@ -2,6 +2,7 @@ package uk.ac.kent.co600.project.stylechecker.jar;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,6 +12,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.FileAttribute;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -56,12 +58,16 @@ public class JarExtractor {
                 sessionUuid.toString() + DASH_SEPARATOR + sanitizeFileName(entry),
                 JAVA_SOURCE_FILE_EXTENSION
         );
-        InputStream fileIs = jar.getInputStream(entry);
         FileOutputStream fileOs = new FileOutputStream(fileDest.toFile());
+        InputStream fileIs = jar.getInputStream(entry);
         while (fileIs.available() != 0) {
             fileOs.write(fileIs.read());
         }
-        return ExtractedFile.of(fileDest.toFile(), entry.getName());
+        return ExtractedFile.of(
+                fileDest.toFile(),
+                entry.getName(),
+                IOUtils.readLines(jar.getInputStream(entry))
+        );
     }
 
     private String sanitizeFileName(JarEntry entry) {

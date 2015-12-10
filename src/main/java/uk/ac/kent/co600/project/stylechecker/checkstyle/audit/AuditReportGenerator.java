@@ -23,9 +23,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Consumes error events from a run of {@link Checker} and produces a report.
- * This class is NOT thread safe.
  */
-@NotThreadSafe
 public class AuditReportGenerator extends ErrorOnlyAuditListener {
 
     private final ImmutableList.Builder<AuditEvent> errors = ImmutableList.builder();
@@ -98,7 +96,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
                 .collect(
                         ImmutableCollectors.toListMultiMap(
                                 e -> pathToFile.get(e.getFileName()),
-                                CheckResultTranslator::translate
+                                e -> CheckResultTranslator.translate(e, pathToFile.get(e.getFileName()))
                         )
                 );
     }
