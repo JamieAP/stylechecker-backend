@@ -62,7 +62,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
         ImmutableList<FileAudit> fileAudits = ImmutableList.copyOf(auditedFiles);
         ImmutableList<String> checkNames = fileAudits.stream()
                 .flatMap(e -> e.getAuditEntries().stream())
-                .map(FileAuditEntry::getCheckClassName)
+                .map(FileAuditEntry::getStyleGuideRule)
                 .collect(ImmutableCollectors.toList());
 
         Long uniqueFailedChecks = checkNames.stream().distinct().count();
