@@ -22,6 +22,7 @@ import com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyLineSeparatorCheck
 import com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileSnippet;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.HasConstructorCheck;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.InvokesSuperConstructorCheck;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 
@@ -166,6 +167,10 @@ public class AuditEventTranslator {
         builder.put(
                 InvokesSuperConstructorCheck.class,
                 (e, f) -> toAuditEntry("4.6 Always include superclass constructor call", e, f)
+        );
+        builder.put(
+                HasConstructorCheck.class,
+                (e, f) -> toAuditEntry("4.5 Always include a constructor (even if the body is empty)", e, f)
         );
         return builder.build();
     }

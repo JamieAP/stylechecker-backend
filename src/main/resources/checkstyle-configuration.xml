@@ -62,5 +62,6 @@
         <!-- 4.2 Fields may not be public (except for final fields). -->
         <module name="VisibilityModifier"/>
         <module name="uk.ac.kent.co600.project.stylechecker.checkstyle.checks.InvokesSuperConstructorCheck"/>
+        <module name="uk.ac.kent.co600.project.stylechecker.checkstyle.checks.HasConstructorCheck"/>
     </module>
 </module>
