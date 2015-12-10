@@ -41,9 +41,8 @@ public class CheckerResource {
                 .map(ExtractedFile::getFile)
                 .collect(ImmutableCollectors.toList());
         checker.process(files);
-        AuditReport report = auditor.buildReport(extractionResult);
         files.forEach(File::delete);
-        return report;
+        return auditor.buildReport(extractionResult);
     }
 
     @GET
