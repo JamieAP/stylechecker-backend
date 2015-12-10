@@ -14,13 +14,13 @@ public class AuditReport {
             Integer numberOfChecks,
             Integer uniqueFailedChecks,
             Integer totalFailedChecks,
-            ImmutableList<FileAudit> fileAudits,
+            Iterable<FileAudit> fileAudits,
             Iterable<String> ignoredFiles
     ) {
         this.numberOfChecks = numberOfChecks;
         this.uniqueFailedChecks = uniqueFailedChecks;
         this.totalFailedChecks = totalFailedChecks;
-        this.fileAudits = fileAudits;
+        this.fileAudits = ImmutableList.copyOf(fileAudits);
         this.ignoredFiles = ImmutableList.copyOf(ignoredFiles);
     }
 
@@ -49,7 +49,7 @@ public class AuditReport {
     }
 
     public static final class Builder {
-        private ImmutableList<FileAudit> fileAudits;
+        private Iterable<FileAudit> fileAudits;
         private Integer numberOfChecks;
         private Integer uniqueFailedChecks;
         private Integer totalFailedChecks;
@@ -58,7 +58,7 @@ public class AuditReport {
         private Builder() {
         }
 
-        public Builder withFileAudits(ImmutableList<FileAudit> val) {
+        public Builder withFileAudits(Iterable<FileAudit> val) {
             fileAudits = val;
             return this;
         }
