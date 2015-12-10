@@ -45,6 +45,36 @@ public class CheckResultTranslator {
         return (Class) sourceClass.get(msg);
     }
 
+    private static String checkKeyOf(AuditEvent e) {
+        try {
+            Field keyField = LocalizedMessage.class.getDeclaredField("key");
+            keyField.setAccessible(true);
+            return (String) keyField.get(e.getLocalizedMessage());
+        } catch (Exception ex) {
+            throw Throwables.propagate(ex);
+        }
+    }
+
+    private static <T> T firstArgOf(AuditEvent e, Class<T> argType) {
+        try {
+            Field keyField = LocalizedMessage.class.getDeclaredField("args");
+            keyField.setAccessible(true);
+            return (T) ((Object[]) keyField.get(e.getLocalizedMessage()))[0];
+        } catch (Exception ex) {
+            throw Throwables.propagate(ex);
+        }
+    }
+
+    private static FileAuditEntry toAuditEntry(String msg, AuditEvent e) {
+        return FileAuditEntry.of(
+                msg,
+                e.getLine(),
+                e.getColumn(),
+                e.getSourceName(),
+                e.getMessage()
+        );
+    }
+
     private static ImmutableMap<Class<?>, Function<AuditEvent, FileAuditEntry>> createTranslators() {
         ImmutableMap.Builder<Class<?>, Function<AuditEvent, FileAuditEntry>> builder = ImmutableMap.builder();
         builder.put(
@@ -120,35 +150,5 @@ public class CheckResultTranslator {
                 e -> toAuditEntry("4.2 Fields may not be public (except for final fields)", e)
         );
         return builder.build();
-    }
-
-    private static String checkKeyOf(AuditEvent e) {
-        try {
-            Field keyField = LocalizedMessage.class.getDeclaredField("key");
-            keyField.setAccessible(true);
-            return (String) keyField.get(e.getLocalizedMessage());
-        } catch (Exception ex) {
-            throw Throwables.propagate(ex);
-        }
-    }
-
-    private static <T> T firstArgOf(AuditEvent e, Class<T> argType) {
-        try {
-            Field keyField = LocalizedMessage.class.getDeclaredField("args");
-            keyField.setAccessible(true);
-            return (T) ((Object[]) keyField.get(e.getLocalizedMessage()))[0];
-        } catch (Exception ex) {
-            throw Throwables.propagate(ex);
-        }
-    }
-
-    private static FileAuditEntry toAuditEntry(String msg, AuditEvent e) {
-        return FileAuditEntry.of(
-                msg,
-                e.getLine(),
-                e.getColumn(),
-                e.getSourceName(),
-                e.getMessage()
-        );
     }
 }
