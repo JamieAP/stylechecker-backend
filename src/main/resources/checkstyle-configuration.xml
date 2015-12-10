@@ -63,6 +63,7 @@
         <module name="VisibilityModifier"/>
         <!-- 4.6 Always include superclass constructor call. -->
         <module name="uk.ac.kent.co600.project.stylechecker.checkstyle.checks.InvokesSuperConstructorCheck"/>
+        <!-- 4.3 Always use an access modifier -->
         <module name="uk.ac.kent.co600.project.stylechecker.checkstyle.checks.MethodHasAccessModifierCheck"/>
     </module>
 </module>
