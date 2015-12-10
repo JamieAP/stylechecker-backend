@@ -28,6 +28,26 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 import java.lang.reflect.Field;
 import java.util.function.BiFunction;
 
+/**
+ * A class that translates a {@link com.puppycrawl.tools.checkstyle.Checker}'s {@link AuditEvent}s into our model.
+ * A part of this process is to map {@link com.puppycrawl.tools.checkstyle.api.Check}s to the
+ * Objects First style guide.
+ *
+ * Due to some CheckStyle Checks mapping to more than one of Object First's rules we have to
+ * use reflection to extract certain discriminating information from the {@link LocalizedMessage}
+ * carried by each {@link AuditEvent} as its not exposed by the API.
+ *
+ * Most checks can be matched to a style guide rule by the {@link Class} of the check alone.
+ *
+ * Some checks are matched through a combination of the {@link Class} of the check and the message
+ * key the check erred with. This message key normally tells CheckStyle which message to display
+ * but here it also helps us identify the error case and map it to one of our rules.
+ *
+ * Finally some checks are matched through a combination of the {@link Class} of the check and the
+ * arguments the check used. For example, the WhitespaceAround check will error with an argument
+ * of '{' if there is whitespace missing from a left curly brace. This tells us which of our two
+ * rules covered by WhitespaceAround we should map an error to.
+ */
 public class AuditEventTranslator {
 
     private static final ImmutableMap<Class<?>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> TRANSLATORS =
@@ -84,6 +104,9 @@ public class AuditEventTranslator {
         );
     }
 
+    /*
+        Extracts the problematic line and the two lines either side of it.
+     */
     private static FileSnippet getLines(ExtractedFile file, Integer line) {
         ImmutableList<String> lines = file.getLines();
         int previousLine = line - 2;
@@ -95,6 +118,11 @@ public class AuditEventTranslator {
         );
     }
 
+    /**
+        Provides the mapping between {@link com.puppycrawl.tools.checkstyle.api.Check} classes
+        and a {@link BiFunction} that knows how to turn an {@link AuditEvent} produced by that check
+        and the {@link ExtractedFile} the source came from into a {@link FileAuditEntry}
+     */
     private static ImmutableMap<Class<?>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> createTranslators() {
         ImmutableMap.Builder<Class<?>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> builder = ImmutableMap.builder();
         builder.put(
