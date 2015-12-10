@@ -95,11 +95,9 @@ public class CheckResultTranslator {
         );
         builder.put(
                 IndentationCheck.class,
-                e -> {
-                    return checkKeyOf(e).equals("indentation.error") ?
-                            toAuditEntry("2.2 All statements within a block are indented one level", e) :
-                            toAuditEntry("2.1 One level of indentation is four spaces", e);
-                }
+                e -> checkKeyOf(e).equals("indentation.error") ?
+                        toAuditEntry("2.2 All statements within a block are indented one level", e) :
+                        toAuditEntry("2.1 One level of indentation is four spaces", e)
         );
         builder.put(
                 MissingCtorCheck.class,
@@ -115,19 +113,15 @@ public class CheckResultTranslator {
         );
         builder.put(
                 LeftCurlyCheck.class,
-                e -> {
-                    return checkKeyOf(e).equals("line.new") ?
-                            toAuditEntry("2.3 Braces for classes and methods are alone on one line", e) :
-                            toAuditEntry("2.4 For all other blocks, braces open at the end of a line", e);
-                }
+                e -> checkKeyOf(e).equals("line.new") ?
+                        toAuditEntry("2.3 Braces for classes and methods are alone on one line", e) :
+                        toAuditEntry("2.4 For all other blocks, braces open at the end of a line", e)
         );
         builder.put(
                 WhitespaceAroundCheck.class,
-                e -> {
-                    return firstArgOf(e, String.class).equals("{") ?
-                            toAuditEntry("2.6 Use a space before the opening brace of a control structure's block", e) :
-                            toAuditEntry("2.7 Use a space around operators", e);
-                }
+                e -> firstArgOf(e, String.class).equals("{") ?
+                        toAuditEntry("2.6 Use a space before the opening brace of a control structure's block", e) :
+                        toAuditEntry("2.7 Use a space around operators", e)
         );
         builder.put(
                 EmptyLineSeparatorCheck.class,
