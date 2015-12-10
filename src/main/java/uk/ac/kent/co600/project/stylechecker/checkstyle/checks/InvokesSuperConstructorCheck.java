@@ -38,7 +38,8 @@ public class InvokesSuperConstructorCheck extends Check {
         boolean isAbstract = modifiers.branchContains(TokenTypes.ABSTRACT);
         boolean isSubClass = classDef.branchContains(TokenTypes.EXTENDS_CLAUSE);
         if (isSubClass && !isAbstract && !invokesSuperCtor && !invokesOtherCtor) {
-            log(ast.getLineNo(), KEY);
+            String className = classDef.findFirstToken(TokenTypes.IDENT).getText();
+            log(ast.getLineNo(), String.format("Class %s does not invoke superclass constructor", className));
         }
     }
 }

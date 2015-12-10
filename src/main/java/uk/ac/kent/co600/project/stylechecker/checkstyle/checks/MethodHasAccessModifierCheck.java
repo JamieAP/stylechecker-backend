@@ -29,7 +29,8 @@ public class MethodHasAccessModifierCheck extends Check {
                 modifiers.branchContains(TokenTypes.LITERAL_PRIVATE) ||
                 modifiers.branchContains(TokenTypes.LITERAL_PROTECTED);
         if (!hasNonPackageAccessModifier) {
-            log(ast.getLineNo(), "missing.accessModifier");
+            String methodName = ast.findFirstToken(TokenTypes.IDENT).getText();
+            log(ast.getLineNo(), String.format("Method %s is missing an access modifier", methodName));
         }
     }
 }
