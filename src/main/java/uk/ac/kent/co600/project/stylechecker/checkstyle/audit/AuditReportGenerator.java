@@ -8,6 +8,7 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAudit;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckResultTranslator;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
@@ -47,17 +48,20 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
 
     public AuditReport buildReport(ExtractionResult files) {
         checkState(consumed.compareAndSet(false, true), "This instance has already been used!");
-        return score(
-                numberOfChecks,
-                mapEventsToFileAudits(errors.build(), files.mapPathsToFiles()),
-                files.getIgnoredFiles()
+        ImmutableList<FileAudit> auditedFiles = mapEventsToFileAudits(
+                errors.build(),
+                files.mapPathsToFiles()
         );
+        AuditReport.Builder builder = AuditReport.newBuilder()
+                .withFileAudits(auditedFiles)
+                .withIgnoredFiles(files.getIgnoredFiles());
+        return score(numberOfChecks, auditedFiles, builder).build();
     }
 
-    private AuditReport score(
+    private AuditReport.Builder score(
             Integer numberOfChecks,
             Iterable<FileAudit> auditedFiles,
-            Iterable<String> ignoredFiles
+            AuditReport.Builder reportBuilder
     ) {
         ImmutableList<FileAudit> fileAudits = ImmutableList.copyOf(auditedFiles);
         ImmutableList<String> checkNames = fileAudits.stream()
@@ -67,13 +71,10 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
 
         Long uniqueFailedChecks = checkNames.stream().distinct().count();
         Integer failuresTotal = checkNames.size();
-        return AuditReport.newBuilder()
+        return reportBuilder
                 .withNumberOfChecks(numberOfChecks)
                 .withUniqueFailedChecks(uniqueFailedChecks.intValue())
-                .withTotalFailedChecks(failuresTotal)
-                .withFileAudits(fileAudits)
-                .withIgnoredFiles(ignoredFiles)
-                .build();
+                .withTotalFailedChecks(failuresTotal);
     }
 
     private ImmutableList<FileAudit> mapEventsToFileAudits(
@@ -97,7 +98,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
                 .collect(
                         ImmutableCollectors.toListMultiMap(
                                 e -> pathToFile.get(e.getFileName()),
-                                e -> FileAuditEntry.of(e.getMessage(), e.getLine(), e.getColumn(), e.getSourceName())
+                                CheckResultTranslator::translate
                         )
                 );
     }

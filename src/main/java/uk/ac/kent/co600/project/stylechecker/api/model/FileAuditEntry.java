@@ -4,14 +4,22 @@ public class FileAuditEntry {
 
     private final Integer column;
     private final Integer line;
-    private final String message;
+    private final String styleGuideRule;
     private final String checkClassName;
+    private final String checkErrorMessge;
 
-    public FileAuditEntry(String message, Integer line, Integer column, String checkClassName) {
-        this.message = message;
+    public FileAuditEntry(
+            String styleGuideRule,
+            Integer line,
+            Integer column,
+            String checkClassName,
+            String checkErrorMessge
+    ) {
+        this.styleGuideRule = styleGuideRule;
         this.line = line;
         this.column = column;
         this.checkClassName = checkClassName;
+        this.checkErrorMessge = checkErrorMessge;
     }
 
     public Integer getColumn() {
@@ -22,15 +30,25 @@ public class FileAuditEntry {
         return line;
     }
 
-    public String getMessage() {
-        return message;
+    public String getStyleGuideRule() {
+        return styleGuideRule;
     }
 
     public String getCheckClassName() {
         return checkClassName;
     }
 
-    public static FileAuditEntry of(String msg, Integer line, Integer col, String checkClassName) {
-        return new FileAuditEntry(msg, line, col, checkClassName);
+    public String getCheckErrorMessge() {
+        return checkErrorMessge;
+    }
+
+    public static FileAuditEntry of(
+            String msg,
+            Integer line,
+            Integer col,
+            String checkClassName,
+            String checkErrorMessge
+    ) {
+        return new FileAuditEntry(msg, line, col, checkClassName, checkErrorMessge);
     }
 }
