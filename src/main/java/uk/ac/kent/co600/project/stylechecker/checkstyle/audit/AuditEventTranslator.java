@@ -24,6 +24,7 @@ import com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileSnippet;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.InvokesSuperConstructorCheck;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.MethodHasAccessModifierCheck;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 
 import java.lang.reflect.Field;
@@ -195,6 +196,10 @@ public class AuditEventTranslator {
         builder.put(
                 InvokesSuperConstructorCheck.class,
                 (e, f) -> toAuditEntry("4.6 Always include superclass constructor call", e, f)
+        );
+        builder.put(
+                MethodHasAccessModifierCheck.class,
+                (e, f) -> toAuditEntry("4.3 Always use an access modifier", e, f)
         );
         return builder.build();
     }
