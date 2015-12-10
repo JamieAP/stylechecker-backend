@@ -33,7 +33,7 @@
         <module name="LeftCurly">
             <property name="option" value="eol"/>
             <property name="tokens"
-                      value="LITERAL_WHILE,LITERAL_TRY,LITERAL_CATCH,LITERAL_FINALLY,LITERAL_SYNCHRONIZED,LITERAL_SWITCH,LITERAL_DO,LITERAL_IF,LITERAL_ELSE,LITERAL_FOR,STATIC_INIT,OBJBLOCK"/>
+                      value="LITERAL_WHILE,LITERAL_TRY,LITERAL_CATCH,LITERAL_FINALLY,LITERAL_SYNCHRONIZED,LITERAL_SWITCH,LITERAL_DO,LITERAL_IF,LITERAL_ELSE,LITERAL_FOR,STATIC_INIT"/>
         </module>
         <!-- 2.7 Use a space around operators. -->
         <!-- 2.6 Use a space before the opening brace of a control structure's block. -->
