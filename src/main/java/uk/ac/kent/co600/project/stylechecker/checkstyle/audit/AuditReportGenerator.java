@@ -8,12 +8,10 @@ import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAudit;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
-import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckResultTranslator;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -96,7 +94,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
                 .collect(
                         ImmutableCollectors.toListMultiMap(
                                 e -> pathToFile.get(e.getFileName()),
-                                e -> CheckResultTranslator.translate(e, pathToFile.get(e.getFileName()))
+                                e -> AuditEventTranslator.translate(e, pathToFile.get(e.getFileName()))
                         )
                 );
     }

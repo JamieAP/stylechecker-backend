@@ -1,4 +1,4 @@
-package uk.ac.kent.co600.project.stylechecker.checkstyle;
+package uk.ac.kent.co600.project.stylechecker.checkstyle.audit;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -20,21 +20,23 @@ import com.puppycrawl.tools.checkstyle.checks.naming.MethodNameCheck;
 import com.puppycrawl.tools.checkstyle.checks.naming.TypeNameCheck;
 import com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyLineSeparatorCheck;
 import com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck;
-import org.apache.commons.io.IOUtils;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileSnippet;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.InvokesSuperConstructorCheck;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 
-import java.io.FileInputStream;
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.function.BiFunction;
 
-public class CheckResultTranslator {
+public class AuditEventTranslator {
 
     private static final ImmutableMap<Class<?>, BiFunction<AuditEvent, ExtractedFile, FileAuditEntry>> TRANSLATORS =
             createTranslators();
     private static final String SOURCE_CLASS_FIELD_NAME = "sourceClass";
+    private static final String KEY_FIELD_NAME = "key";
+    private static final String ARGS_FIELD_NAME = "args";
+    private static final String LINE_NEW = "line.new";
+    private static final String LEFT_CURLY = "{";
 
     public static FileAuditEntry translate(AuditEvent checkResult, ExtractedFile file) {
         try {
@@ -53,7 +55,7 @@ public class CheckResultTranslator {
 
     private static String checkKeyOf(AuditEvent e) {
         try {
-            Field keyField = LocalizedMessage.class.getDeclaredField("key");
+            Field keyField = LocalizedMessage.class.getDeclaredField(KEY_FIELD_NAME);
             keyField.setAccessible(true);
             return (String) keyField.get(e.getLocalizedMessage());
         } catch (Exception ex) {
@@ -63,7 +65,7 @@ public class CheckResultTranslator {
 
     private static <T> T firstArgOf(AuditEvent e, Class<T> argType) {
         try {
-            Field keyField = LocalizedMessage.class.getDeclaredField("args");
+            Field keyField = LocalizedMessage.class.getDeclaredField(ARGS_FIELD_NAME);
             keyField.setAccessible(true);
             return (T) ((Object[]) keyField.get(e.getLocalizedMessage()))[0];
         } catch (Exception ex) {
@@ -131,13 +133,13 @@ public class CheckResultTranslator {
         );
         builder.put(
                 LeftCurlyCheck.class,
-                (e, f) -> checkKeyOf(e).equals("line.new") ?
+                (e, f) -> checkKeyOf(e).equals(LINE_NEW) ?
                         toAuditEntry("2.3 Braces for classes and methods are alone on one line", e, f) :
                         toAuditEntry("2.4 For all other blocks, braces open at the end of a line", e, f)
         );
         builder.put(
                 WhitespaceAroundCheck.class,
-                (e, f) -> firstArgOf(e, String.class).equals("{") ?
+                (e, f) -> firstArgOf(e, String.class).equals(LEFT_CURLY) ?
                         toAuditEntry("2.6 Use a space before the opening brace of a control structure's block", e, f) :
                         toAuditEntry("2.7 Use a space around operators", e, f)
         );
@@ -160,6 +162,10 @@ public class CheckResultTranslator {
         builder.put(
                 VisibilityModifierCheck.class,
                 (e, f) -> toAuditEntry("4.2 Fields may not be public (except for final fields)", e, f)
+        );
+        builder.put(
+                InvokesSuperConstructorCheck.class,
+                (e, f) -> toAuditEntry("4.6 Always include superclass constructor call", e, f)
         );
         return builder.build();
     }

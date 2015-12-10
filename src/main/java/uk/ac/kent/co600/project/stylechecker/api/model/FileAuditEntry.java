@@ -1,7 +1,5 @@
 package uk.ac.kent.co600.project.stylechecker.api.model;
 
-import com.google.common.collect.ImmutableList;
-
 public class FileAuditEntry {
 
     private final Integer column;
