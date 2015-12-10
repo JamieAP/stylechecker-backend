@@ -65,7 +65,11 @@ public class CheckResultTranslator {
         );
         builder.put(
                 IndentationCheck.class,
-                e -> toAuditEntry("2.2 All statements within a block are indented one level / 2.1 One level of indentation is four spaces", e)
+                e -> {
+                    return checkKeyOf(e).equals("indentation.error") ?
+                            toAuditEntry("2.2 All statements within a block are indented one level", e) :
+                            toAuditEntry("2.1 One level of indentation is four spaces", e);
+                }
         );
         builder.put(
                 MissingCtorCheck.class,
@@ -81,11 +85,19 @@ public class CheckResultTranslator {
         );
         builder.put(
                 LeftCurlyCheck.class,
-                e -> toAuditEntry("2.3 Braces for classes and methods are alone on one line / 2.4 For all other blocks, braces open at the end of a line", e)
+                e -> {
+                    return checkKeyOf(e).equals("line.new") ?
+                            toAuditEntry("2.3 Braces for classes and methods are alone on one line", e) :
+                            toAuditEntry("2.4 For all other blocks, braces open at the end of a line", e);
+                }
         );
         builder.put(
                 WhitespaceAroundCheck.class,
-                e -> toAuditEntry("2.7 Use a space around operators / 2.6 Use a space before the opening brace of a control structure's block", e)
+                e -> {
+                    return firstArgOf(e, String.class).equals("{") ?
+                            toAuditEntry("2.6 Use a space before the opening brace of a control structure's block", e) :
+                            toAuditEntry("2.7 Use a space around operators", e);
+                }
         );
         builder.put(
                 EmptyLineSeparatorCheck.class,
@@ -108,6 +120,26 @@ public class CheckResultTranslator {
                 e -> toAuditEntry("4.2 Fields may not be public (except for final fields)", e)
         );
         return builder.build();
+    }
+
+    private static String checkKeyOf(AuditEvent e) {
+        try {
+            Field keyField = LocalizedMessage.class.getDeclaredField("key");
+            keyField.setAccessible(true);
+            return (String) keyField.get(e.getLocalizedMessage());
+        } catch (Exception ex) {
+            throw Throwables.propagate(ex);
+        }
+    }
+
+    private static <T> T firstArgOf(AuditEvent e, Class<T> argType) {
+        try {
+            Field keyField = LocalizedMessage.class.getDeclaredField("args");
+            keyField.setAccessible(true);
+            return (T) ((Object[]) keyField.get(e.getLocalizedMessage()))[0];
+        } catch (Exception ex) {
+            throw Throwables.propagate(ex);
+        }
     }
 
     private static FileAuditEntry toAuditEntry(String msg, AuditEvent e) {
