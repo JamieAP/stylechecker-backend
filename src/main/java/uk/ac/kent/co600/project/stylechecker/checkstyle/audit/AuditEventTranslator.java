@@ -66,6 +66,7 @@ public class AuditEventTranslator {
         return TRANSLATORS.get(checkClassOf(checkResult)).apply(checkResult, file);
     }
 
+    @SuppressWarnings("unchecked")
     private static Class<? extends Check> checkClassOf(AuditEvent checkResult) {
         try {
             LocalizedMessage msg = checkResult.getLocalizedMessage();
@@ -87,6 +88,7 @@ public class AuditEventTranslator {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T firstArgOf(AuditEvent e, Class<T> argType) {
         try {
             Field keyField = LocalizedMessage.class.getDeclaredField(ARGS_FIELD_NAME);
