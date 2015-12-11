@@ -23,7 +23,6 @@ import com.puppycrawl.tools.checkstyle.checks.whitespace.EmptyLineSeparatorCheck
 import com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileSnippet;
-import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.FieldAssignedToInConstructorCheck;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.FieldHasAccessModifierCheck;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.InvokesSuperConstructorCheck;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.checks.MethodHasAccessModifierCheck;
@@ -208,10 +207,6 @@ public class AuditEventTranslator {
         builder.put(
                 FieldHasAccessModifierCheck.class,
                 (e, f) -> toAuditEntry("4.3 Always use an access modifier", e, f)
-        );
-        builder.put(
-                FieldAssignedToInConstructorCheck.class,
-                (e, f) -> toAuditEntry("4.7 Initialise all fields in the constructor", e, f)
         );
         return builder.build();
     }
