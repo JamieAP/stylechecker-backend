@@ -105,15 +105,16 @@ public class AuditEventTranslator {
                 e.getColumn(),
                 e.getSourceName(),
                 e.getMessage(),
-                getLines(file, e.getLine())
+                createSnippet(file, e.getLine())
         );
     }
 
     /*
         Extracts the problematic line and the two lines either side of it.
      */
-    private static FileSnippet getLines(ExtractedFile file, Integer line) {
+    private static FileSnippet createSnippet(ExtractedFile file, Integer line) {
         ImmutableList<String> lines = file.getLines();
+        /* Note we correct the line numbers for the 0-indexed List */
         int previousLine = line - 2;
         int nextLine = line;
         return new FileSnippet(

@@ -8,22 +8,31 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributeView;
-import java.nio.file.attribute.FileAttribute;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class JarExtractor {
+/**
+ * A class that handles the extraction of files in a JAR
+ *
+ * This extractor ignores everything bar Java source files, i.e. files with the extension .java
+ */
+public class SourcesJarExtractor {
 
     private static final String JAVA_SOURCE_FILE_EXTENSION = ".java";
     private static final String JAR_FILE_EXTENSION = ".jar";
     private static final String DASH_SEPARATOR = "-";
     private static final Path TEMP_DIR = Paths.get(System.getProperty("java.io.tmpdir"));
 
+    /**
+     * Extract Java source files from an {@link InputStream} that represents a JAR
+     * @param is - An InputStream backed by a JAR file.
+     */
     public ExtractionResult extract(InputStream is) throws IOException {
         UUID sessionUuid = UUID.randomUUID();
         JarFile jarFile = saveJarToFs(is, sessionUuid);

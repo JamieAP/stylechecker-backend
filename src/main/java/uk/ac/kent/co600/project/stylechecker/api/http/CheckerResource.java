@@ -10,7 +10,7 @@ import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditReportGenerator;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
-import uk.ac.kent.co600.project.stylechecker.jar.JarExtractor;
+import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
 import javax.ws.rs.*;
@@ -30,7 +30,7 @@ public class CheckerResource {
     public AuditReport post(
             @FormDataParam("file") InputStream is,
             @FormDataParam("file") FormDataBodyPart bodyPart,
-            @Context JarExtractor extractor,
+            @Context SourcesJarExtractor extractor,
             @Context CheckerFactory checkerFactory
     ) throws IOException, CheckstyleException {
         Checker checker = checkerFactory.createChecker();

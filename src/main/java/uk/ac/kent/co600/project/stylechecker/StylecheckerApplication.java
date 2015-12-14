@@ -1,7 +1,6 @@
 package uk.ac.kent.co600.project.stylechecker;
 
 import com.google.common.base.Throwables;
-import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
@@ -12,7 +11,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.xml.sax.InputSource;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
-import uk.ac.kent.co600.project.stylechecker.jar.JarExtractor;
+import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 
 public class StylecheckerApplication extends Application<StylecheckerConfiguration> {
 
@@ -46,7 +45,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
     private AbstractBinder instanceBindings() {
         return new AbstractBinder() {
             @Override protected void configure() {
-                bind(new JarExtractor()).to(JarExtractor.class);
+                bind(new SourcesJarExtractor()).to(SourcesJarExtractor.class);
                 bind(createCheckerFactory()).to(CheckerFactory.class);
             }
         };
