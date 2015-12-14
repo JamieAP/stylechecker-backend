@@ -4,6 +4,9 @@ import com.puppycrawl.tools.checkstyle.api.Check;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
+/**
+    A check that checks any class methods have access modifiers, i.e. they are not package private.
+ */
 public class MethodHasAccessModifierCheck extends Check {
 
     @Override

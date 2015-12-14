@@ -4,6 +4,10 @@ import com.puppycrawl.tools.checkstyle.api.Check;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
+/**
+    A check that the checks any class fields have access modifiers, i.e. they are not package
+    private.
+ */
 public class FieldHasAccessModifierCheck extends Check {
 
     @Override
@@ -24,6 +28,7 @@ public class FieldHasAccessModifierCheck extends Check {
     @Override
     public void visitToken(DetailAST ast) {
         if (ast.getParent().getParent().getType() != TokenTypes.CLASS_DEF) {
+            /* ast is not a class field */
             return;
         }
         DetailAST modifiers = ast.findFirstToken(TokenTypes.MODIFIERS);

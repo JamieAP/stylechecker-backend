@@ -27,7 +27,11 @@ public class CheckerResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public AuditReport post(
+    /**
+     * The main audit endpoint. Submitting a JAR produces a report of on the compliance of any Java
+     * source files to the CO320 style guide.
+     */
+    public AuditReport auditSourceCode(
             @FormDataParam("file") InputStream is,
             @FormDataParam("file") FormDataBodyPart bodyPart,
             @Context SourcesJarExtractor extractor,
@@ -49,7 +53,7 @@ public class CheckerResource {
     @Produces(MediaType.TEXT_HTML)
     public Response get() {
         return Response.ok("\n" +
-                "<form action=\"http://jamiep.net/check\" method=\"post\" enctype=\"multipart/form-data\">\n" +
+                "<form action=\"http://jamiep.net/check\" method=\"POST\" enctype=\"multipart/form-data\">\n" +
                 "    Select file to upload:\n" +
                 "    <input type=\"file\" name=\"file\" id=\"file\">\n" +
                 "    <input type=\"submit\" value=\"Upload File\" name=\"submit\">\n" +
