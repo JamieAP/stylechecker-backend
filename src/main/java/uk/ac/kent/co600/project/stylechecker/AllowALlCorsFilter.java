@@ -12,7 +12,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
 @Provider
-public class CorsFilter implements ContainerResponseFilter {
+public class AllowAllCorsFilter implements ContainerResponseFilter {
 
     private static final Joiner JOINER = Joiner.on(", ");
 

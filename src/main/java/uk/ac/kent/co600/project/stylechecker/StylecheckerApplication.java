@@ -26,7 +26,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
         env.jersey().register(CheckerResource.class);
         env.jersey().register(MultiPartFeature.class);
         env.jersey().register(instanceBindings());
-        env.jersey().register(CorsFilter.class);
+        env.jersey().register(AllowAllCorsFilter.class);
     }
 
     private CheckerFactory createCheckerFactory() {
