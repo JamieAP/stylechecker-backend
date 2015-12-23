@@ -20,4 +20,4 @@ anywhere for deployment.
 
 You should check the configuration file is suitable for your environment before deploying.
 
-Once running the service will start a HTTP server listening on the port and path specified in the configuration file.
+Once running the service will start a HTTP server listening on the port (8888) and path (/stylechecker) specified in the configuration file.
