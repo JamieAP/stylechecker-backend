@@ -48,17 +48,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
                 errors.build(),
                 files.mapPathsToFiles()
         );
-        AuditReport.Builder builder = AuditReport.newBuilder()
-                .withFileAudits(auditedFiles)
-                .withIgnoredFiles(files.getIgnoredFiles());
-        return score(numberOfChecks, auditedFiles, builder).build();
-    }
 
-    private AuditReport.Builder score(
-            Integer numberOfChecks,
-            Iterable<FileAudit> auditedFiles,
-            AuditReport.Builder reportBuilder
-    ) {
         ImmutableList<FileAudit> fileAudits = ImmutableList.copyOf(auditedFiles);
         ImmutableList<String> checkNames = fileAudits.stream()
                 .flatMap(e -> e.getAuditEntries().stream())
@@ -67,10 +57,14 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
 
         Long uniqueFailedChecks = checkNames.stream().distinct().count();
         Integer failuresTotal = checkNames.size();
-        return reportBuilder
+
+        return AuditReport.newBuilder()
+                .withFileAudits(auditedFiles)
+                .withIgnoredFiles(files.getIgnoredFiles())
                 .withNumberOfChecks(numberOfChecks)
                 .withUniqueFailedChecks(uniqueFailedChecks.intValue())
-                .withTotalFailedChecks(failuresTotal);
+                .withTotalFailedChecks(failuresTotal)
+                .build();
     }
 
     private ImmutableList<FileAudit> mapEventsToFileAudits(
