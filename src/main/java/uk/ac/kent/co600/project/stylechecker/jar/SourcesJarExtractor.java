@@ -19,7 +19,7 @@ import java.util.jar.JarFile;
 
 /**
  * A class that handles the extraction of files in a JAR
- *
+ * <p>
  * This extractor ignores everything bar Java source files, i.e. files with the extension .java
  */
 public class SourcesJarExtractor {
@@ -31,6 +31,7 @@ public class SourcesJarExtractor {
 
     /**
      * Extract Java source files from an {@link InputStream} that represents a JAR
+     *
      * @param is - An InputStream backed by a JAR file.
      */
     public ExtractionResult extract(InputStream is) throws IOException {
@@ -43,7 +44,7 @@ public class SourcesJarExtractor {
         ImmutableList.Builder<String> ignoredFileNames = ImmutableList.builder();
         ImmutableList.Builder<ExtractedFile> extractedSourceFiles = ImmutableList.builder();
 
-        for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements();) {
+        for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements(); ) {
             JarEntry entry = entries.nextElement();
             String entryName = entry.getName();
             if (Strings.isNullOrEmpty(entryName) || !entryName.endsWith(JAVA_SOURCE_FILE_EXTENSION)) {
@@ -63,7 +64,7 @@ public class SourcesJarExtractor {
     }
 
     private ExtractedFile extractFile(UUID sessionUuid, JarFile jar, JarEntry entry) throws IOException {
-        java.nio.file.Path fileDest = Files.createTempFile(
+        Path fileDest = Files.createTempFile(
                 sessionUuid.toString() + DASH_SEPARATOR + sanitizeFileName(entry),
                 JAVA_SOURCE_FILE_EXTENSION
         );
