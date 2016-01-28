@@ -15,7 +15,7 @@ import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 
 public class StylecheckerApplication extends Application<StylecheckerConfiguration> {
 
-    private static final String CHECKSTYLE_CONFIG_FILE_NAME = "checkstyl-econfiguration.xml";
+    private static final String CHECKSTYLE_CONFIG_FILE_NAME = "checkstyle-configuration.xml";
 
     public static void main(String[] args) throws Exception {
         new StylecheckerApplication().run(args);
