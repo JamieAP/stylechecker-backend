@@ -2,7 +2,6 @@ package uk.ac.kent.co600.project.stylechecker.jar;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
@@ -12,7 +11,6 @@ import org.junit.Test;
 import org.xml.sax.InputSource;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
-import uk.ac.kent.co600.project.stylechecker.api.model.FileAudit;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 
 import java.io.File;
@@ -29,7 +27,7 @@ public class CheckStyleRulesTest {
     private CheckerFactory checkerFactory;
 
     private ExtractionResult getTestSourceFile(String name) throws Exception {
-        File file = new File(ClassLoader.getSystemResource(name).toURI());
+        File file = new File("src/test/resources/".concat(name));
         return new ExtractionResult(
                 ImmutableList.of(),
                 ImmutableList.of(
@@ -67,7 +65,7 @@ public class CheckStyleRulesTest {
                 extracted
         );
 
-        assertThat(report, is(not(null)));
+        assertNotNull(report);
         /*assertThat(file.getAuditEntries().size(), is(2));
         assertNotNull(Iterables.find(file.getAuditEntries(), i -> i.getStyleGuideRule().equals("4.5 Always include a constructor (even if the body is empty)") && i.getLine().equals(8)));
         assertNotNull(Iterables.find(file.getAuditEntries(), i -> i.getStyleGuideRule().equals("4.3 Always use an access modifier") && i.getLine().equals(19)));*/

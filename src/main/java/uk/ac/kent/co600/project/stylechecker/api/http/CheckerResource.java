@@ -1,11 +1,13 @@
 package uk.ac.kent.co600.project.stylechecker.api.http;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
+import uk.ac.kent.co600.project.stylechecker.api.model.FileAudit;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditReportGenerator;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
@@ -39,13 +41,27 @@ public class CheckerResource {
     ) throws IOException, CheckstyleException {
         Checker checker = checkerFactory.createChecker();
         ExtractionResult extractionResult = extractor.extract(is);
-        AuditReportGenerator auditor = new AuditReportGenerator(checkerFactory.getNumberOfChecks());
+        AuditReport report = createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checker,
+                extractionResult
+        );
+        extractionResult.getExtractedFiles().stream().forEach(f -> f.getFile().delete());
+        return report;
+    }
+
+    @VisibleForTesting
+    public AuditReport createAuditReport(
+            Integer numberOfChecks,
+            Checker checker,
+            ExtractionResult extractionResult
+    ) throws CheckstyleException {
+        AuditReportGenerator auditor = new AuditReportGenerator(numberOfChecks);
         checker.addListener(auditor);
         ImmutableList<File> files = extractionResult.getExtractedFiles().stream()
                 .map(ExtractedFile::getFile)
                 .collect(ImmutableCollectors.toList());
         checker.process(files);
-        files.forEach(File::delete);
         return auditor.buildReport(extractionResult);
     }
 
