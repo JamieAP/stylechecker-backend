@@ -44,7 +44,7 @@ public class CheckerResource {
                 checker,
                 extractionResult
         );
-        extractionResult.getExtractedFiles().stream().forEach(f -> f.getFile().delete());
+        extractionResult.getExtractedFiles().forEach(f -> f.getFile().delete());
         return report;
     }
 
