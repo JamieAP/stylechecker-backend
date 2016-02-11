@@ -29,10 +29,6 @@ public class CheckerResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    /**
-     * The main audit endpoint. Submitting a JAR produces a report of on the compliance of any Java
-     * source files to the CO320 style guide.
-     */
     public AuditReport auditSourceCode(
             @FormDataParam("file") InputStream inputStream,
             @FormDataParam("file") FormDataBodyPart bodyPart,
