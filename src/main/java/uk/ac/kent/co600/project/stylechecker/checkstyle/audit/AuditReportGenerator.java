@@ -44,12 +44,11 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
 
     public AuditReport buildReport(ExtractionResult extResult) {
         checkState(consumed.compareAndSet(false, true), "This instance has already been used!");
-        ImmutableList<FileAudit> auditedFiles = mapEventsToFileAudits(
+        ImmutableList<FileAudit> fileAudits = mapEventsToFileAudits(
                 errors.build(),
                 extResult.mapPathsToFiles()
         );
 
-        ImmutableList<FileAudit> fileAudits = ImmutableList.copyOf(auditedFiles);
         ImmutableList<String> checkNames = fileAudits.stream()
                 .flatMap(e -> e.getAuditEntries().stream())
                 .map(FileAuditEntry::getStyleGuideRule)
@@ -60,7 +59,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
 
         return AuditReport.newBuilder()
                 .withOriginalJarName(extResult.getOriginalJarName())
-                .withFileAudits(auditedFiles)
+                .withFileAudits(fileAudits)
                 .withIgnoredFiles(extResult.getIgnoredFiles())
                 .withNumberOfChecks(numberOfChecks)
                 .withUniqueFailedChecks(uniqueFailedChecks.intValue())
