@@ -18,7 +18,11 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,12 +33,13 @@ import java.util.stream.StreamSupport;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class CheckCommand extends Command {
+public class CheckerCommand extends Command {
 
+    public static final Charset UTF8 = Charset.forName("UTF-8");
     private final CheckerFactory checkerFactory;
     private final SourcesJarExtractor extractor;
 
-    public CheckCommand(
+    public CheckerCommand(
             String name,
             String description,
             CheckerFactory checkerFactory,
@@ -61,11 +66,21 @@ public class CheckCommand extends Command {
                 entry -> entry.toString().endsWith("zip") || entry.toString().endsWith("jar")
         );
         ImmutableList<AuditReport> reports = StreamSupport.stream(paths.spliterator(), false)
-                .map(extractJar())
+                .map(pathToJarExtractionResult())
                 .map(this::checkSourceFiles)
                 .collect(ImmutableCollectors.toList());
 
         reports.stream().forEach(this::writeToFile);
+    }
+
+    private Function<Path, ExtractionResult> pathToJarExtractionResult() {
+        return p -> {
+            try {
+                return extractor.extract(p.getFileName().toString(), new FileInputStream(p.toFile()));
+            } catch (IOException e) {
+                throw Throwables.propagate(e);
+            }
+        };
     }
 
     private File getSourcesDirectory(Namespace namespace) throws IOException {
@@ -77,16 +92,6 @@ public class CheckCommand extends Command {
                 file.getAbsolutePath() + " does not exist or is not a readable directory"
         );
         return file;
-    }
-
-    private Function<Path, ExtractionResult> extractJar() {
-        return p -> {
-            try {
-                return extractor.extract(new FileInputStream(p.toFile()));
-            } catch (IOException e) {
-                throw Throwables.propagate(e);
-            }
-        };
     }
 
     private AuditReport checkSourceFiles(ExtractionResult srcFiles) {
@@ -109,24 +114,19 @@ public class CheckCommand extends Command {
         return auditor.buildReport(srcFiles);
     }
 
-    // TODO: Needs to write a textual report to the working dir
     private void writeToFile(AuditReport auditReport) {
-        try {
-            Path workingDir = Paths.get(System.getProperty("user.dir"));
-            String sourceFileName = "blabla";
-
-            PrintWriter writer = new PrintWriter(workingDir + sourceFileName + ".txt", "UTF-8");
-
-            auditReport.getFileAudits().forEach(f -> f.getAuditEntries().forEach(a -> {
-                writer.println(a.getStyleGuideRule());
-            }));
+        Path resultsFile = Paths.get(
+                System.getProperty("user.dir"), auditReport.getOriginalJarName() + "-results.txt"
+        );
+        try (PrintWriter writer = new PrintWriter(resultsFile.toFile(), UTF8.name())) {
+            auditReport.getFileAudits().forEach(f -> f.getAuditEntries()
+                    .forEach(a -> writer.println(a.getStyleGuideRule())));
 
             writer.println("Total Checks: " + auditReport.getNumberOfChecks());
             writer.println("Total Failed: " + auditReport.getUniqueFailedChecks());
             writer.println("Mark:" + (auditReport.getUniqueFailedChecks() / auditReport.getNumberOfChecks()));
             writer.close();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }

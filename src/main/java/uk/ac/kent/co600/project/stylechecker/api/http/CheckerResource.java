@@ -34,13 +34,15 @@ public class CheckerResource {
      * source files to the CO320 style guide.
      */
     public AuditReport auditSourceCode(
-            @FormDataParam("file") InputStream is,
+            @FormDataParam("file") InputStream inputStream,
             @FormDataParam("file") FormDataBodyPart bodyPart,
             @Context SourcesJarExtractor extractor,
             @Context CheckerFactory checkerFactory
     ) throws IOException, CheckstyleException {
         Checker checker = checkerFactory.createChecker();
-        ExtractionResult extractionResult = extractor.extract(is);
+        ExtractionResult extractionResult = extractor.extract(
+                bodyPart.getContentDisposition().getFileName(), inputStream
+        );
         AuditReport report = createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checker,
