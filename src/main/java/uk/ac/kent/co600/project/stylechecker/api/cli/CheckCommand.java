@@ -18,9 +18,7 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -113,6 +111,23 @@ public class CheckCommand extends Command {
 
     // TODO: Needs to write a textual report to the working dir
     private void writeToFile(AuditReport auditReport) {
-        Path workingDir = Paths.get(System.getProperty("user.dir"));
+        try {
+            Path workingDir = Paths.get(System.getProperty("user.dir"));
+            String sourceFileName = "blabla";
+
+            PrintWriter writer = new PrintWriter(workingDir + sourceFileName + ".txt", "UTF-8");
+
+            auditReport.getFileAudits().forEach(f -> f.getAuditEntries().forEach(a -> {
+                writer.println(a.getStyleGuideRule());
+            }));
+
+            writer.println("Total Checks: " + auditReport.getNumberOfChecks());
+            writer.println("Total Failed: " + auditReport.getUniqueFailedChecks());
+            writer.println("Mark:" + (auditReport.getUniqueFailedChecks() / auditReport.getNumberOfChecks()));
+            writer.close();
+        }
+        catch (Exception e){
+            System.out.println(e.toString());
+        }
     }
 }
