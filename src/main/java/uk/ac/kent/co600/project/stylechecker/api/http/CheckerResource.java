@@ -67,7 +67,7 @@ public class CheckerResource {
     @Produces(MediaType.TEXT_HTML)
     public Response get() {
         return Response.ok("\n" +
-                "<form action=\"http://localhost:8080/check\" method=\"POST\" enctype=\"multipart/form-data\">\n" +
+                "<form action=\"http://stylechecker.jkeeys.co.uk:8888/stylechecker/check\" method=\"POST\" enctype=\"multipart/form-data\">\n" +
                 "    Select file to upload:\n" +
                 "    <input type=\"file\" name=\"file\" id=\"file\">\n" +
                 "    <input type=\"submit\" value=\"Upload File\" name=\"submit\">\n" +
