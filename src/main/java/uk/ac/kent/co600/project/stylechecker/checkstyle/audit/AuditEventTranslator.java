@@ -115,14 +115,17 @@ public class AuditEventTranslator {
     private static FileSnippet createSnippet(ExtractedFile file, Integer line) {
         ImmutableList<String> lines = file.getLines();
         /* Note we correct the line numbers for the 0-indexed List */
-        int previousLine = line - 2;
-        int nextLine = line;
+        int firstLine = line - 3;
+        int secondLine = line - 2;
+        int targetLine = line - 1;
+        int forthLine = line;
+        int fifthLine = line + 1;
         return new FileSnippet(
-                lines.size() > previousLine - 1 && previousLine - 1 >= 0 ? lines.get(previousLine - 1) : null,
-                lines.size() > previousLine && previousLine >= 0 ? lines.get(previousLine) : null,
-                lines.get(line - 1),
-                lines.size() > nextLine && nextLine >= 0 ? lines.get(nextLine) : null,
-                lines.size() > nextLine + 1 && nextLine + 1 >= 0 ? lines.get(nextLine + 1) : null
+                lines.size() > firstLine && firstLine >= 0 ? lines.get(firstLine) : null,
+                lines.size() > secondLine && secondLine >= 0 ? lines.get(secondLine) : null,
+                lines.get(targetLine),
+                lines.size() > forthLine && forthLine >= 0 ? lines.get(forthLine) : null,
+                lines.size() > fifthLine && fifthLine >= 0 ? lines.get(fifthLine) : null
         );
     }
 

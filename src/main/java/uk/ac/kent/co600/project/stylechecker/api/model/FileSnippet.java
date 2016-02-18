@@ -2,36 +2,36 @@ package uk.ac.kent.co600.project.stylechecker.api.model;
 
 public class FileSnippet {
 
-    private final String previousLine2;
-    private final String previousLine;
+    private final String firstLine;
+    private final String secondLine;
     private final String targetLine;
-    private final String nextLine;
-    private final String nextLine2;
+    private final String forthLine;
+    private final String fifthLine;
 
-    public FileSnippet(String previousLine2, String previousLine, String targetLine, String nextLine, String nextLine2) {
-        this.previousLine2 = previousLine2;
-        this.previousLine = previousLine;
+    public FileSnippet(String firstLine, String secondLine, String targetLine, String forthLine, String fifthLine) {
+        this.firstLine = firstLine;
+        this.secondLine = secondLine;
         this.targetLine = targetLine;
-        this.nextLine = nextLine;
-        this.nextLine2 = nextLine2;
+        this.forthLine = forthLine;
+        this.fifthLine = fifthLine;
     }
-    public String getPreviousLine2() {
-        return previousLine2;
+    public String getFirstLine() {
+        return firstLine;
     }
 
-    public String getPreviousLine() {
-        return previousLine;
+    public String getSecondLine() {
+        return secondLine;
     }
 
     public String getTargetLine() {
         return targetLine;
     }
 
-    public String getNextLine() {
-        return nextLine;
+    public String getForthLine() {
+        return forthLine;
     }
 
-    public String getNextLine2() {
-        return nextLine2;
+    public String getFifthLine() {
+        return fifthLine;
     }
 }
