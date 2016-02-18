@@ -1,8 +1,7 @@
 package uk.ac.kent.co600.project.stylechecker.api.cli;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import io.dropwizard.cli.Command;
@@ -11,6 +10,7 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
+import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditReportGenerator;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
@@ -18,6 +18,7 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,10 +27,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -133,33 +131,40 @@ public class CheckerCommand extends Command {
                 auditReport.getOriginalJarName(),
                 resultsFile.toAbsolutePath().toAbsolutePath()
         );
-        
-        ArrayList<String> styleGuideRules= new ArrayList<String>();
+
+
+        ImmutableMultiset<String> failedRules = auditReport.getFileAudits().stream()
+                .flatMap(audit -> audit.getAuditEntries().stream())
+                .map(FileAuditEntry::getStyleGuideRule)
+                .collect(ImmutableCollectors.toMultiset());
+
+
         try (PrintWriter writer = new PrintWriter(resultsFile.toFile(), UTF8.name())) {
-            writer.println("---------BEGIN AUDIT REPORT---------");
-            auditReport.getFileAudits().forEach(f -> f.getAuditEntries()
-                    .forEach(a -> {
-                        writer.println(
-                                "FILE [" + f.getFilePath() + "] " +
-                                        "LINE [" + a.getLine() + "] " +
-                                        "COLUMN [" + a.getColumn() + "] " +
-                                        "RULE [" + a.getStyleGuideRule() + "]");
-                        styleGuideRules.add(a.getStyleGuideRule());
-                    }));
-            writer.println("---------END AUDIT REPORT---------");
+            writer.println("---------Results---------");
+            writer.printf("Total Rules: %d%n", auditReport.getNumberOfChecks());
+            writer.printf("Total Errors: %d%n", auditReport.getUniqueFailedChecks());
+            writer.printf("Mark: %.2f%%%n", auditReport.getGrade());
 
-            writer.println("---------BEGIN SUMMARY---------");
-            Set<String> uniqueStyleGuideRules = new HashSet<String>(styleGuideRules);
-            uniqueStyleGuideRules.forEach(uniqueStyleGuideRule -> {
-                writer.println(uniqueStyleGuideRule + " [" + Collections.frequency(styleGuideRules, uniqueStyleGuideRule) + "] ");
+            writer.println("\n---------Summary---------");
+            Ordering.natural()
+                    .onResultOf(failedRules::count)
+                    .reverse()
+                    .immutableSortedCopy(failedRules.elementSet())
+                    .forEach(s -> writer.printf("Errors: %d Rule: %s%n", failedRules.count(s), s));
+
+            writer.println("\n---------Source File Details---------");
+            auditReport.getFileAudits().forEach(f -> {
+                f.getAuditEntries().forEach(a ->
+                        writer.printf(
+                                "File: %s Line: %d Col: %d Rule: %s%n",
+                                f.getFilePath(),
+                                a.getLine(),
+                                a.getColumn(),
+                                a.getStyleGuideRule()
+                        )
+                );
+                writer.println();
             });
-            writer.println("---------END SUMMARY---------");
-
-            writer.println("---------BEGIN RESULTS---------");
-            writer.println("Total Checks: " + auditReport.getNumberOfChecks());
-            writer.println("Total Failed: " + auditReport.getUniqueFailedChecks());
-            writer.println("Mark:" + (((float) auditReport.getUniqueFailedChecks() / auditReport.getNumberOfChecks()) * 100 ) + "%");
-            writer.println("---------END RESULTS---------");
             writer.close();
         } catch (Exception e) {
             System.out.println(e.toString());

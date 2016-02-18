@@ -55,6 +55,11 @@ public class AuditReport {
         return ignoredFiles;
     }
 
+    public Float getGrade() {
+        return ((float) getUniqueFailedChecks() / (float) getNumberOfChecks())
+                * 100;
+    }
+
     public static final class Builder {
         private String originalJarName;
         private Iterable<FileAudit> fileAudits;

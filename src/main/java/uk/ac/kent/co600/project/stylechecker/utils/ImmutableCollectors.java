@@ -16,6 +16,15 @@ public class ImmutableCollectors {
         );
     }
 
+    public static <T> Collector<T, ImmutableMultiset.Builder<T>, ImmutableMultiset<T>> toMultiset() {
+        return Collector.of(
+                ImmutableMultiset.Builder::new,
+                ImmutableMultiset.Builder::add,
+                (b1, b2) -> b1.addAll(b2.build()),
+                ImmutableMultiset.Builder::build
+        );
+    }
+
     public static <T, K, V> Collector<T, ImmutableMap.Builder<K, V>, ImmutableMap<K, V>> toMap(
             Function<T, K> keyFunction, Function<T, V> valueFunction) {
         return Collector.of(
