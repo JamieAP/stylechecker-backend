@@ -118,9 +118,11 @@ public class AuditEventTranslator {
         int previousLine = line - 2;
         int nextLine = line;
         return new FileSnippet(
+                lines.size() > previousLine - 1 && previousLine - 1 >= 0 ? lines.get(previousLine - 1) : null,
                 lines.size() > previousLine && previousLine >= 0 ? lines.get(previousLine) : null,
                 lines.get(line - 1),
-                lines.size() > nextLine && nextLine >= 0 ? lines.get(nextLine) : null
+                lines.size() > nextLine && nextLine >= 0 ? lines.get(nextLine) : null,
+                lines.size() > nextLine + 1 && nextLine + 1 >= 0 ? lines.get(nextLine + 1) : null
         );
     }
 
