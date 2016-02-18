@@ -26,6 +26,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -129,13 +133,33 @@ public class CheckerCommand extends Command {
                 auditReport.getOriginalJarName(),
                 resultsFile.toAbsolutePath().toAbsolutePath()
         );
+        
+        ArrayList<String> styleGuideRules= new ArrayList<String>();
         try (PrintWriter writer = new PrintWriter(resultsFile.toFile(), UTF8.name())) {
+            writer.println("---------BEGIN AUDIT REPORT---------");
             auditReport.getFileAudits().forEach(f -> f.getAuditEntries()
-                    .forEach(a -> writer.println(a.getStyleGuideRule())));
+                    .forEach(a -> {
+                        writer.println(
+                                "FILE [" + f.getFilePath() + "] " +
+                                        "LINE [" + a.getLine() + "] " +
+                                        "COLUMN [" + a.getColumn() + "] " +
+                                        "RULE [" + a.getStyleGuideRule() + "]");
+                        styleGuideRules.add(a.getStyleGuideRule());
+                    }));
+            writer.println("---------END AUDIT REPORT---------");
 
+            writer.println("---------BEGIN SUMMARY---------");
+            Set<String> uniqueStyleGuideRules = new HashSet<String>(styleGuideRules);
+            uniqueStyleGuideRules.forEach(uniqueStyleGuideRule -> {
+                writer.println(uniqueStyleGuideRule + " [" + Collections.frequency(styleGuideRules, uniqueStyleGuideRule) + "] ");
+            });
+            writer.println("---------END SUMMARY---------");
+
+            writer.println("---------BEGIN RESULTS---------");
             writer.println("Total Checks: " + auditReport.getNumberOfChecks());
             writer.println("Total Failed: " + auditReport.getUniqueFailedChecks());
-            writer.println("Mark:" + (auditReport.getUniqueFailedChecks() / auditReport.getNumberOfChecks()));
+            writer.println("Mark:" + (((float) auditReport.getUniqueFailedChecks() / auditReport.getNumberOfChecks()) * 100 ) + "%");
+            writer.println("---------END RESULTS---------");
             writer.close();
         } catch (Exception e) {
             System.out.println(e.toString());
