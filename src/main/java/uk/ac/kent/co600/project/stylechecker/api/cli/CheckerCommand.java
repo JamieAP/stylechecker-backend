@@ -1,7 +1,10 @@
 package uk.ac.kent.co600.project.stylechecker.api.cli;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import io.dropwizard.cli.Command;
@@ -18,7 +21,6 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,7 +29,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -132,12 +133,10 @@ public class CheckerCommand extends Command {
                 resultsFile.toAbsolutePath().toAbsolutePath()
         );
 
-
         ImmutableMultiset<String> failedRules = auditReport.getFileAudits().stream()
                 .flatMap(audit -> audit.getAuditEntries().stream())
                 .map(FileAuditEntry::getStyleGuideRule)
                 .collect(ImmutableCollectors.toMultiset());
-
 
         try (PrintWriter writer = new PrintWriter(resultsFile.toFile(), UTF8.name())) {
             writer.println("---------Results---------");
