@@ -33,6 +33,6 @@ public class CheckerFactory {
      * used in {@link uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditEventTranslator}
      */
     public Integer getNumberOfChecks() {
-        return 18;
+        return 19;
     }
 }

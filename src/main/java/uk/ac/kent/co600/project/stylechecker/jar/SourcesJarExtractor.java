@@ -3,14 +3,16 @@ package uk.ac.kent.co600.project.stylechecker.jar;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.IOUtils;
-import sun.tools.jar.resources.jar;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Enumeration;
 import java.util.UUID;
 import java.util.jar.JarEntry;
@@ -44,7 +46,7 @@ public class SourcesJarExtractor {
     private void archiveJar(File jarFile) throws IOException {
 
         Path targetDir = Paths.get(
-                URI.create("file://" + System.getProperty("user.dir") + "/archiveDir" + )
+                URI.create("file://" + System.getProperty("user.dir") + "/archiveDir")
         );
         if (!targetDir.toFile().exists()) {
             Files.createDirectory(targetDir);
@@ -68,10 +70,10 @@ public class SourcesJarExtractor {
             if (Strings.isNullOrEmpty(entryName) || !entryName.endsWith(JAVA_SOURCE_FILE_EXTENSION)) {
                 ignoredFileNames.add(entryName);
             } else {
-                extractedSourceFiles.add(extractFile(sessionUuid, jarFile, entry));
+                ExtractedFile extractedFile = extractFile(sessionUuid, jarFile, entry);
+                extractedSourceFiles.add(extractedFile);
             }
         }
-
         return ExtractionResult.of(fileName, ignoredFileNames.build(), extractedSourceFiles.build());
     }
 
