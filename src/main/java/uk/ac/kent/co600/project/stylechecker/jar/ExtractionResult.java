@@ -6,12 +6,22 @@ import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
 public class ExtractionResult {
 
+    private final String originalJarName;
     private final ImmutableList<String> ignoredFiles;
     private final ImmutableList<ExtractedFile> extractedFiles;
 
-    public ExtractionResult(Iterable<String> ignoredFiles, Iterable<ExtractedFile> extractedFiles) {
+    public ExtractionResult(
+            String originalJarName,
+            Iterable<String> ignoredFiles,
+            Iterable<ExtractedFile> extractedFiles
+    ) {
+        this.originalJarName = originalJarName;
         this.ignoredFiles = ImmutableList.copyOf(ignoredFiles);
         this.extractedFiles = ImmutableList.copyOf(extractedFiles);
+    }
+
+    public String getOriginalJarName() {
+        return originalJarName;
     }
 
     public ImmutableList<String> getIgnoredFiles() {
@@ -27,7 +37,7 @@ public class ExtractionResult {
                 .collect(ImmutableCollectors.toMap(f -> f.getFile().getAbsolutePath(), f -> f));
     }
 
-    public static ExtractionResult of(Iterable<String> ignoredFiles, Iterable<ExtractedFile> extractedFiles) {
-        return new ExtractionResult(ignoredFiles, extractedFiles);
+    public static ExtractionResult of(String fileName, Iterable<String> ignoredFiles, Iterable<ExtractedFile> extractedFiles) {
+        return new ExtractionResult(fileName, ignoredFiles, extractedFiles);
     }
 }

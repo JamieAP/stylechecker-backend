@@ -18,23 +18,28 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
-import java.io.*;
-import java.nio.file.DirectoryStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
-import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class CheckCommand extends Command {
+public class CheckerCommand extends Command {
 
+    private static final Charset UTF8 = Charset.forName("UTF-8");
+    private static final String WORKING_DIR = System.getProperty("user.dir");
+    private static final String RESULTS_FILE_SUFFIX = "-results.txt";
     private final CheckerFactory checkerFactory;
     private final SourcesJarExtractor extractor;
 
-    public CheckCommand(
+    public CheckerCommand(
             String name,
             String description,
             CheckerFactory checkerFactory,
@@ -56,37 +61,41 @@ public class CheckCommand extends Command {
     @Override
     public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
         File srcDir = getSourcesDirectory(namespace);
-        DirectoryStream<Path> paths = Files.newDirectoryStream(
-                srcDir.toPath(),
-                entry -> entry.toString().endsWith("zip") || entry.toString().endsWith("jar")
+        ImmutableList<Path> paths = ImmutableList.copyOf(
+                Files.newDirectoryStream(
+                        srcDir.toPath(),
+                        entry -> entry.toString().endsWith("zip") || entry.toString().endsWith("jar")
+                )
         );
-        ImmutableList<AuditReport> reports = StreamSupport.stream(paths.spliterator(), false)
-                .map(extractJar())
-                .map(this::checkSourceFiles)
-                .collect(ImmutableCollectors.toList());
 
-        reports.stream().forEach(this::writeToFile);
+        System.out.printf("Found %d JAR/ZIP files \n", paths.size());
+        paths.forEach(p -> System.out.println(p.getFileName().toString()));
+
+        paths.stream()
+                .map(pathToJarExtractionResult())
+                .map(this::checkSourceFiles)
+                .forEach(this::writeToFile);
+    }
+
+    private Function<Path, ExtractionResult> pathToJarExtractionResult() {
+        return p -> {
+            try {
+                return extractor.extract(p.getFileName().toString(), new FileInputStream(p.toFile()));
+            } catch (IOException e) {
+                throw Throwables.propagate(e);
+            }
+        };
     }
 
     private File getSourcesDirectory(Namespace namespace) throws IOException {
         String filePath = Iterables.getOnlyElement(namespace.get("filePath"));
-        System.out.println("Looking in: " + filePath);
         File file = Paths.get(filePath).toFile();
+        System.out.println("Looking in: " + file.getAbsolutePath());
         checkArgument(
                 file.isDirectory() && file.exists(),
                 file.getAbsolutePath() + " does not exist or is not a readable directory"
         );
         return file;
-    }
-
-    private Function<Path, ExtractionResult> extractJar() {
-        return p -> {
-            try {
-                return extractor.extract(new FileInputStream(p.toFile()));
-            } catch (IOException e) {
-                throw Throwables.propagate(e);
-            }
-        };
     }
 
     private AuditReport checkSourceFiles(ExtractionResult srcFiles) {
@@ -106,27 +115,29 @@ public class CheckCommand extends Command {
             throw Throwables.propagate(e);
         }
 
-        return auditor.buildReport(srcFiles);
+        AuditReport report = auditor.buildReport(srcFiles);
+        srcFiles.getExtractedFiles().forEach(f -> f.getFile().delete());
+        return report;
     }
 
-    // TODO: Needs to write a textual report to the working dir
     private void writeToFile(AuditReport auditReport) {
-        try {
-            Path workingDir = Paths.get(System.getProperty("user.dir"));
-            String sourceFileName = "blabla";
-
-            PrintWriter writer = new PrintWriter(workingDir + sourceFileName + ".txt", "UTF-8");
-
-            auditReport.getFileAudits().forEach(f -> f.getAuditEntries().forEach(a -> {
-                writer.println(a.getStyleGuideRule());
-            }));
+        Path resultsFile = Paths.get(
+                WORKING_DIR, auditReport.getOriginalJarName() + RESULTS_FILE_SUFFIX
+        );
+        System.out.printf(
+                "Writing report for %s to %s\n",
+                auditReport.getOriginalJarName(),
+                resultsFile.toAbsolutePath().toAbsolutePath()
+        );
+        try (PrintWriter writer = new PrintWriter(resultsFile.toFile(), UTF8.name())) {
+            auditReport.getFileAudits().forEach(f -> f.getAuditEntries()
+                    .forEach(a -> writer.println(a.getStyleGuideRule())));
 
             writer.println("Total Checks: " + auditReport.getNumberOfChecks());
             writer.println("Total Failed: " + auditReport.getUniqueFailedChecks());
             writer.println("Mark:" + (auditReport.getUniqueFailedChecks() / auditReport.getNumberOfChecks()));
             writer.close();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
     }

@@ -25,6 +25,13 @@ public class CheckerFactory {
         }
     }
 
+    /**
+     * Because multiple Checkstyle checks map to multiple style guide rules, there is way to
+     * programmatically determine at runtime the number of checks we will report to the user.
+     *
+     * Thus we hardcode it here, it should be equal to the number of unique check style rules
+     * used in {@link uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditEventTranslator}
+     */
     public Integer getNumberOfChecks() {
         return 18;
     }

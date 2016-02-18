@@ -14,7 +14,7 @@ public class SourcesJarExtractorTest {
     public void testExtractsCorrectNumberOfFiles() throws Exception {
         FileInputStream fos = getTestJar();
         SourcesJarExtractor jarExtractor = new SourcesJarExtractor();
-        ExtractionResult result = jarExtractor.extract(fos);
+        ExtractionResult result = jarExtractor.extract("", fos);
 
         assertThat(result.getIgnoredFiles().size(), is(10));
         assertThat(result.getExtractedFiles().size(), is(5));
@@ -24,7 +24,7 @@ public class SourcesJarExtractorTest {
     public void testExtractedFilesAreReadableSourceFiles() throws Exception {
         FileInputStream fos = getTestJar();
         SourcesJarExtractor jarExtractor = new SourcesJarExtractor();
-        ExtractionResult result = jarExtractor.extract(fos);
+        ExtractionResult result = jarExtractor.extract("", fos);
 
         for (ExtractedFile extractedFile : result.getExtractedFiles()) {
             assertThat(extractedFile.getFile().isFile(), is(true));

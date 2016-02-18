@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 public class AuditReport {
 
+    private final String originalJarName;
     private final ImmutableList<FileAudit> fileAudits;
     private final Integer numberOfChecks;
     private final Integer uniqueFailedChecks;
@@ -11,12 +12,14 @@ public class AuditReport {
     private final ImmutableList<String> ignoredFiles;
 
     public AuditReport(
+            String originalJarName,
             Integer numberOfChecks,
             Integer uniqueFailedChecks,
             Integer totalFailedChecks,
             Iterable<FileAudit> fileAudits,
             Iterable<String> ignoredFiles
     ) {
+        this.originalJarName = originalJarName;
         this.numberOfChecks = numberOfChecks;
         this.uniqueFailedChecks = uniqueFailedChecks;
         this.totalFailedChecks = totalFailedChecks;
@@ -26,6 +29,10 @@ public class AuditReport {
 
     public static Builder newBuilder() {
         return new Builder();
+    }
+
+    public String getOriginalJarName() {
+        return originalJarName;
     }
 
     public Integer getNumberOfChecks() {
@@ -49,13 +56,18 @@ public class AuditReport {
     }
 
     public static final class Builder {
+        private String originalJarName;
         private Iterable<FileAudit> fileAudits;
         private Integer numberOfChecks;
         private Integer uniqueFailedChecks;
         private Integer totalFailedChecks;
         private Iterable<String> ignoredFiles;
 
-        private Builder() {
+        private Builder() {}
+
+        public Builder withOriginalJarName(String val) {
+            originalJarName = val;
+            return this;
         }
 
         public Builder withFileAudits(Iterable<FileAudit> val) {
@@ -85,6 +97,7 @@ public class AuditReport {
 
         public AuditReport build() {
             return new AuditReport(
+                    originalJarName,
                     numberOfChecks,
                     uniqueFailedChecks,
                     totalFailedChecks,

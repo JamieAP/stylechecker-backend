@@ -18,7 +18,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * A class that handles the extraction of files in a JAR
+ * A class that handles the extraction of files in a JAR/ZIP
  * <p>
  * This extractor ignores everything bar Java source files, i.e. files with the extension .java
  */
@@ -32,15 +32,16 @@ public class SourcesJarExtractor {
     /**
      * Extract Java source files from an {@link InputStream} that represents a JAR
      *
+     * @fileName - The name of the JAR file
      * @param is - An InputStream backed by a JAR file.
      */
-    public ExtractionResult extract(InputStream is) throws IOException {
+    public ExtractionResult extract(String fileName, InputStream is) throws IOException {
         UUID sessionUuid = UUID.randomUUID();
         JarFile jarFile = saveJarToFs(is, sessionUuid);
-        return processEntries(sessionUuid, jarFile);
+        return processEntries(fileName, sessionUuid, jarFile);
     }
 
-    private ExtractionResult processEntries(UUID sessionUuid, JarFile jarFile) throws IOException {
+    private ExtractionResult processEntries(String fileName, UUID sessionUuid, JarFile jarFile) throws IOException {
         ImmutableList.Builder<String> ignoredFileNames = ImmutableList.builder();
         ImmutableList.Builder<ExtractedFile> extractedSourceFiles = ImmutableList.builder();
 
@@ -54,7 +55,7 @@ public class SourcesJarExtractor {
             }
         }
 
-        return ExtractionResult.of(ignoredFileNames.build(), extractedSourceFiles.build());
+        return ExtractionResult.of(fileName, ignoredFileNames.build(), extractedSourceFiles.build());
     }
 
     private JarFile saveJarToFs(InputStream is, UUID sessionUuid) throws IOException {

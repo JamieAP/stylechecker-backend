@@ -30,6 +30,7 @@ public class CheckStyleRulesTest {
     private ExtractionResult getTestSourceFile(String name) throws Exception {
         File file = new File("src/test/resources/".concat(name));
         return new ExtractionResult(
+                "",
                 ImmutableList.of(),
                 ImmutableList.of(
                         ExtractedFile.of(file, name, IOUtils.readLines(new FileInputStream(file)))

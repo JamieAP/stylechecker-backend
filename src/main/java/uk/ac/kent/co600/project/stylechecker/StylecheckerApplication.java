@@ -5,16 +5,12 @@ import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import io.dropwizard.Application;
-import io.dropwizard.cli.Command;
-import io.dropwizard.cli.ConfiguredCommand;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.xml.sax.InputSource;
-import uk.ac.kent.co600.project.stylechecker.api.cli.CheckCommand;
+import uk.ac.kent.co600.project.stylechecker.api.cli.CheckerCommand;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
@@ -38,7 +34,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
     @Override
     public void initialize(Bootstrap<StylecheckerConfiguration> bootstrap) {
         bootstrap.addCommand(
-                new CheckCommand(
+                new CheckerCommand(
                         "checker",
                         "Check a directory of JAR & ZIP files",
                         createCheckerFactory(),
