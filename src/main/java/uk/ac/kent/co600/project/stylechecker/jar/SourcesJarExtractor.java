@@ -28,13 +28,15 @@ public class SourcesJarExtractor {
     private static final String JAVA_SOURCE_FILE_EXTENSION = ".java";
     private static final String JAR_FILE_EXTENSION = ".jar";
     private static final String DASH_SEPARATOR = "-";
+    private static final String MACOSX_ZIP_RESOURCE_FORK_PREFIX = "__MACOSX";
+
     private static final Path TEMP_DIR = Paths.get(System.getProperty("java.io.tmpdir"));
 
     /**
      * Extract Java source files from an {@link InputStream} that represents a JAR
      *
-     * @fileName - The name of the JAR file
      * @param is - An InputStream backed by a JAR file.
+     * @fileName - The name of the JAR file
      */
     public ExtractionResult extract(String fileName, InputStream is) throws IOException {
         UUID sessionUuid = UUID.randomUUID();
@@ -44,7 +46,6 @@ public class SourcesJarExtractor {
 
     /* TODO remove this after dev */
     private void archiveJar(File jarFile) throws IOException {
-
         Path targetDir = Paths.get(
                 URI.create("file://" + System.getProperty("user.dir") + "/archiveDir")
         );
@@ -54,7 +55,13 @@ public class SourcesJarExtractor {
         Files.copy(
                 jarFile.toPath(),
                 Paths.get(
-                        URI.create("file://" + System.getProperty("user.dir") + "/archiveDir/" + jarFile.getName())
+                        URI.create(
+                                String.format(
+                                        "file://%s/archiveDir/%s",
+                                        System.getProperty("user.dir"),
+                                        jarFile.getName()
+                                )
+                        )
                 ),
                 StandardCopyOption.REPLACE_EXISTING
         );
@@ -66,15 +73,21 @@ public class SourcesJarExtractor {
 
         for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements(); ) {
             JarEntry entry = entries.nextElement();
-            String entryName = entry.getName();
-            if (Strings.isNullOrEmpty(entryName) || !entryName.endsWith(JAVA_SOURCE_FILE_EXTENSION)) {
-                ignoredFileNames.add(entryName);
+            if (!isValidJavaSourceFile(entry)) {
+                ignoredFileNames.add(entry.getName());
             } else {
-                ExtractedFile extractedFile = extractFile(sessionUuid, jarFile, entry);
-                extractedSourceFiles.add(extractedFile);
+                extractedSourceFiles.add(extractFile(sessionUuid, jarFile, entry));
             }
         }
         return ExtractionResult.of(fileName, ignoredFileNames.build(), extractedSourceFiles.build());
+    }
+
+    private boolean isValidJavaSourceFile(JarEntry entry) {
+        return !Strings.isNullOrEmpty(entry.getName()) &&
+                entry.getName().endsWith(JAVA_SOURCE_FILE_EXTENSION) &&
+                !entry.getName().contains(MACOSX_ZIP_RESOURCE_FORK_PREFIX);
+        /* The ZIP utility of OSX includes resource fork files that will bare the Java extension
+            despite being binary files */
     }
 
     private JarFile saveJarToFs(InputStream is, UUID sessionUuid) throws IOException {
