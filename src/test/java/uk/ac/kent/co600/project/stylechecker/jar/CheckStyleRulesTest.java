@@ -1,15 +1,10 @@
 package uk.ac.kent.co600.project.stylechecker.jar;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
-import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-import com.puppycrawl.tools.checkstyle.api.Configuration;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.xml.sax.InputSource;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
@@ -17,7 +12,6 @@ import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -28,7 +22,7 @@ public class CheckStyleRulesTest {
     private CheckerFactory checkerFactory;
 
     private ExtractionResult getTestSourceFile(String name) throws Exception {
-        File file = new File("src/test/resources/".concat(name));
+        File file = new File("src/test/resources/CheckStyleRulesTestResources/".concat(name));
         return new ExtractionResult(
                 "",
                 ImmutableList.of(),
@@ -38,23 +32,12 @@ public class CheckStyleRulesTest {
         );
     }
 
-    private CheckerFactory createCheckerFactory() {
-        try {
-            InputSource checkstyleConfigXml = new InputSource(
-                    ClassLoader.getSystemResourceAsStream("checkstyle-configuration.xml")
-            );
-            Configuration checkstyleConfig = ConfigurationLoader.loadConfiguration(
-                    checkstyleConfigXml, null, true
-            );
-            return new CheckerFactory(checkstyleConfig);
-        } catch (CheckstyleException e) {
-            throw Throwables.propagate(e);
-        }
-    }
-
     @Before
     public void setUp() throws Exception {
-        this.checkerFactory = createCheckerFactory();
+        CheckerFactory checkerFactory = new CheckerFactory(
+                CheckerFactory.loadConfigFromClassPath("checkstyle-configuration.xml")
+        );
+        this.checkerFactory = checkerFactory;
         this.checkerResource = new CheckerResource();
     }
 

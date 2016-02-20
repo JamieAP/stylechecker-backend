@@ -7,6 +7,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
+import com.sun.xml.internal.bind.v2.TODO;
 import io.dropwizard.cli.Command;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -37,7 +38,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class CheckerCommand extends Command {
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final String WORKING_DIR = System.getProperty("user.dir");
+    //TODO change back to final
+    private static String WORKING_DIR = System.getProperty("user.dir");
     private static final String RESULTS_FILE_SUFFIX = "-results.txt";
     private final CheckerFactory checkerFactory;
     private final SourcesJarExtractor extractor;
@@ -99,6 +101,11 @@ public class CheckerCommand extends Command {
                 file.getAbsolutePath() + " does not exist or is not a readable directory"
         );
         return file;
+    }
+
+    //TODO remove and allow the passing of a static working directory
+    public void updateWorkingDir(String path){
+        WORKING_DIR = path;
     }
 
     private AuditReport checkSourceFiles(ExtractionResult srcFiles) {

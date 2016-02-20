@@ -34,7 +34,8 @@ public class SourcesJarExtractorTest {
     }
 
     private FileInputStream getTestJar() throws Exception {
-        File file = new File(getClass().getClassLoader().getResource("test.jar").toURI());
+        File file = new File(getClass().getClassLoader().getResource
+                ("SourcesJarExtractorTestResources/test.jar").toURI());
         return new FileInputStream(file);
     }
 }
