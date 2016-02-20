@@ -1,5 +1,4 @@
 package uk.ac.kent.co600.project.stylechecker.jar;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -11,8 +10,6 @@ import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,11 +31,14 @@ public class CheckerCommandTest {
 
 
     public void processDirectory(String directory) throws Exception {
-        checkerCommand.updateWorkingDir(directory);
         checkerCommand.run(
                 null,
-                new Namespace(ImmutableMap.of("filePath", ImmutableList.of
-                        (directory)))
+                new Namespace(
+                        ImmutableMap.of(
+                                "inputDir", ImmutableList.of(directory),
+                                "outputDir", ImmutableList.of(directory)
+                        )
+                )
         );
     }
 
@@ -68,7 +68,7 @@ public class CheckerCommandTest {
 
     @Test
     public void validJarsResultsCount() throws Exception {
-        String testDir = "src/test/resources/CheckerCommandTestResources/validJARS";
+        String testDir = "src/test/resources/CheckerCommandTestResources/validJars";
         processDirectory(testDir);
         int resultsMissing = verifyResultsExist(testDir);
         assertThat(resultsMissing, is(0));
