@@ -1,10 +1,13 @@
 package uk.ac.kent.co600.project.stylechecker.jar;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
@@ -17,6 +20,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class CheckStyleRulesTest {
+
+    static Logger logger;
+
+    static {
+        logger = ((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME));
+        logger.setLevel(Level.INFO);
+    }
 
     private CheckerResource checkerResource;
     private CheckerFactory checkerFactory;

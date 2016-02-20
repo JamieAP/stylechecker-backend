@@ -1,6 +1,9 @@
 package uk.ac.kent.co600.project.stylechecker.jar;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +12,14 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class SourcesJarExtractorTest {
+
+    static Logger logger;
+
+    static {
+        logger = ((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME));
+        logger.setLevel(Level.INFO);
+    }
+
 
     @Test
     public void testExtractsCorrectNumberOfFiles() throws Exception {

@@ -1,10 +1,14 @@
 package uk.ac.kent.co600.project.stylechecker.jar;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 import uk.ac.kent.co600.project.stylechecker.api.cli.CheckerCommand;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 
@@ -18,6 +22,13 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class CheckerCommandTest {
+
+    static Logger logger;
+
+    static {
+        logger = ((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME));
+        logger.setLevel(Level.INFO);
+    }
 
     private CheckerCommand checkerCommand;
 
@@ -42,20 +53,20 @@ public class CheckerCommandTest {
         );
     }
 
-    public int verifyResultsExist(String directory){
+    public int verifyResultsExist(String directory) {
         File dir = new File("src/test/resources/CheckerCommandTestResources/ValidJARS");
         File[] files = dir.listFiles();
         List<String> fileList = new ArrayList();
         int resultsMissing = 0;
 
-        for(int i=0;i<files.length;i++) {
-            if(files[i].isFile()) {
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isFile()) {
                 fileList.add(files[i].getName());
             }
         }
 
-        for(String file:fileList) {
-            if(file.substring(file.lastIndexOf('.')).equals(".jar") && !fileList.contains(file +
+        for (String file : fileList) {
+            if (file.substring(file.lastIndexOf('.')).equals(".jar") && !fileList.contains(file +
                     "-results.txt")) resultsMissing++;
         }
         return resultsMissing;
@@ -90,7 +101,7 @@ public class CheckerCommandTest {
                 ".jar-results.txt");
         File expected = new File("src/test/resources/CheckerCommandTestResources/validJar/test" +
                 ".jar-results.txt.expected");
-        assertTrue(verifyResultContent(result,expected));
+        assertTrue(verifyResultContent(result, expected));
     }
 
     @Test
