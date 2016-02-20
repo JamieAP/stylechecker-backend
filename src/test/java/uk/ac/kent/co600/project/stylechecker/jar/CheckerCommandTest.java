@@ -54,7 +54,7 @@ public class CheckerCommandTest {
     }
 
     public int verifyResultsExist(String directory) {
-        File dir = new File("src/test/resources/CheckerCommandTestResources/ValidJARS");
+        File dir = new File("src/test/resources/CheckerCommandTestResources/ValidJars");
         File[] files = dir.listFiles();
         List<String> fileList = new ArrayList();
         int resultsMissing = 0;
