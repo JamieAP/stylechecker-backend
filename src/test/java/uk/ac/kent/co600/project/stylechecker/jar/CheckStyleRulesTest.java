@@ -34,10 +34,9 @@ public class CheckStyleRulesTest {
 
     @Before
     public void setUp() throws Exception {
-        CheckerFactory checkerFactory = new CheckerFactory(
+        this.checkerFactory = new CheckerFactory(
                 CheckerFactory.loadConfigFromClassPath("checkstyle-configuration.xml")
         );
-        this.checkerFactory = checkerFactory;
         this.checkerResource = new CheckerResource();
     }
 
