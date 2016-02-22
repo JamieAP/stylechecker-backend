@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 
 public class CheckStyleRulesTest {
@@ -49,6 +50,209 @@ public class CheckStyleRulesTest {
         );
         this.checkerResource = new CheckerResource();
     }
+
+
+    @Test
+    public void classCapitalLetter() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("1.2.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("1.2 Class names start with a capital letter") && i.getLine().equals(5)));
+    }
+
+    @Test
+    public void methodVarCapitalLetter() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("1.4.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(2));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("1.4 Method and variable names start with lowercase " +
+                        "letters") && i.getLine().equals(15)));
+        /*
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("1.4 Method and variable names start with lowercase " +
+                        "letters") && i.getLine().equals(17)));
+                        */
+    }
+
+    @Test
+    public void constCapitalLetter() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("1.5.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("1.5 Constants are written in UPPERCASE") && i
+                .getLine().equals(7)));
+    }
+
+    @Test
+    public void blockLevelIndentation() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("2.2.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.2 All statements within a block are indented one level") && i
+                .getLine().equals(10)));
+    }
+
+    @Test
+    public void bracesAloneOnNewLine() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("2.3.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.3 Braces for classes and methods are alone on one line") && i
+                .getLine().equals(10)));
+    }
+
+    @Test
+    public void bracesAtEndOfLine() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("2.4.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(3));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.4 For all other blocks, braces open at the end of a line") && i
+                .getLine().equals(13)));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.4 For all other blocks, braces open at the end of a line") && i
+                .getLine().equals(17)));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.4 For all other blocks, braces open at the end of a line") && i
+                .getLine().equals(21)));
+    }
+
+    @Test
+    public void alwaysUseBraces() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("2.5.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.5 Always use braces in control structures") && i
+                .getLine().equals(12)));
+    }
+
+    @Test
+    public void spaceAroundOperators() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("2.7.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(4));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.7 Use a space around operators") && i
+                .getLine().equals(12)));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.7 Use a space around operators") && i
+                .getLine().equals(12)));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.7 Use a space around operators") && i
+                .getLine().equals(12)));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.7 Use a space around operators") && i
+                .getLine().equals(12)));
+    }
+
+    @Test
+    public void lineBetweenMethodAndConstructor() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("2.8.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(4));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("2.8 Use a blank line between methods (and constructors)") && i
+                .getLine().equals(16)));
+
+    }
+
+    @Test
+    public void classComments() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("3.1.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(2));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("3.1 Every class has a class comment at the top") && i
+                .getLine().equals(1)));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("3.1 Every class has a class comment at the top") && i
+                .getLine().equals(1)));
+
+    }
+
+    @Test
+    public void methodComments() throws  Exception{
+        ExtractionResult extracted = getTestSourceFile("3.2.java");
+        AuditReport report = checkerResource.createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checkerFactory.createChecker(),
+                extracted
+        );
+        assertNotNull(report);
+        //assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
+        assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i
+                .getStyleGuideRule().equals("3.2 Every method has a method comment") && i
+                .getLine().equals(15)));
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Test
     public void checkThing() throws Exception {
