@@ -9,6 +9,10 @@
         <module name="MethodName"/>
         <!-- 1.4 Method and variable names start with lowercase letters. -->
         <module name="MemberName"/>
+        <!-- 1.4 Method and variable names start with lowercase letters. -->
+        <module name="LocalVariableName"/>
+        <!-- 1.4 Method and variable names start with lowercase letters. -->
+        <module name="LocalFinalVariableName"/>
         <!-- 1.5 Constants are written in UPPERCASE. -->
         <module name="ConstantName"/>
         <!-- 2.2 All statements within a block are indented one level. -->
@@ -54,6 +58,7 @@
         <!-- 3.2 Every method has a method comment. -->
         <module name="JavadocMethod">
             <property name="scope" value="private"/>
+            <property name="allowMissingParamTags" value="true"/>
         </module>
         <!-- 4.4 Import classes separately. -->
         <module name="AvoidStarImport">

@@ -16,6 +16,8 @@ import com.puppycrawl.tools.checkstyle.checks.indentation.IndentationCheck;
 import com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck;
 import com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck;
 import com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck;
+import com.puppycrawl.tools.checkstyle.checks.naming.LocalFinalVariableNameCheck;
+import com.puppycrawl.tools.checkstyle.checks.naming.LocalVariableNameCheck;
 import com.puppycrawl.tools.checkstyle.checks.naming.MemberNameCheck;
 import com.puppycrawl.tools.checkstyle.checks.naming.MethodNameCheck;
 import com.puppycrawl.tools.checkstyle.checks.naming.TypeNameCheck;
@@ -213,6 +215,16 @@ public class AuditEventTranslator {
         builder.put(
                 FieldHasAccessModifierCheck.class,
                 (e, f) -> toAuditEntry("4.3 Always use an access modifier", e, f)
+        );
+        builder.put(
+                LocalVariableNameCheck.class,
+                (e, f) -> toAuditEntry("1.4 Method and variable names start with lowercase " +
+                        "letters", e, f)
+        );
+        builder.put(
+                LocalFinalVariableNameCheck.class,
+                (e, f) -> toAuditEntry("1.4 Method and variable names start with lowercase " +
+                        "letters", e, f)
         );
         return builder.build();
     }

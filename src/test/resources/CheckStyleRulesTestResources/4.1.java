@@ -1,7 +1,7 @@
 import java.util.List;
-/***
- * @author: auth
- * @version: vers
+/**
+ * @author  Zara Ali
+ * @version 1.0
  */
 public class Canvas
 {
