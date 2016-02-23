@@ -1,6 +1,5 @@
 package uk.ac.kent.co600.project.stylechecker;
 
-import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -42,6 +41,9 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
 
         We do this as there is no way to override the default server configuration without
         specifying a configuration file on the CLI
+
+        Configuration can still be overridden using system properties,
+        e.g. -Ddw.server.connector.port=9090
      */
     private static String[] addConfigFromClasspath(String[] cliArgs) {
         return ImmutableList.<String>builder()
