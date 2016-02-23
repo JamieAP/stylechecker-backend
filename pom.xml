@@ -66,6 +66,18 @@
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
+                            <filters>
+                                <filter>
+                                    <!-- See this bug for the reasons why we exclude these files
+                                    https://bugs.eclipse.org/bugs/show_bug.cgi?id=371954 -->
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                         </configuration>
                     </execution>
                 </executions>
