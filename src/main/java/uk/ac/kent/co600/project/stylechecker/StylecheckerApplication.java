@@ -1,5 +1,6 @@
 package uk.ac.kent.co600.project.stylechecker;
 
+import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -18,6 +19,7 @@ import uk.ac.kent.co600.project.stylechecker.api.cli.CheckerCommand;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
+import uk.ac.kent.co600.project.stylechecker.utils.FauxHealthCheck;
 
 import java.util.Arrays;
 
@@ -43,10 +45,10 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
      */
     private static String[] addConfigFromClasspath(String[] cliArgs) {
         return ImmutableList.<String>builder()
-                .addAll(Arrays.asList(cliArgs))
-                .add(STYLECHECKER_CONFIG_FILE)
-                .build()
-                .toArray(new String[cliArgs.length + 1]);
+                    .addAll(Arrays.asList(cliArgs))
+                    .add(STYLECHECKER_CONFIG_FILE)
+                    .build()
+                    .toArray(new String[cliArgs.length + 1]);
     }
 
     @Override
@@ -55,6 +57,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
         env.jersey().register(MultiPartFeature.class);
         env.jersey().register(instanceBindings());
         env.jersey().register(AllowAllCorsFilter.class);
+        env.healthChecks().register("fakeHealthCheck", new FauxHealthCheck());
     }
 
     @Override
@@ -74,7 +77,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
     private CheckerFactory createCheckerFactory() {
         try {
             InputSource checkstyleConfigXml = new InputSource(
-                    ClassLoader.getSystemResourceAsStream(CHECKSTYLE_CONFIG_FILE)
+                ClassLoader.getSystemResourceAsStream(CHECKSTYLE_CONFIG_FILE)
             );
             Configuration checkstyleConfig = ConfigurationLoader.loadConfiguration(
                     checkstyleConfigXml, null, true
@@ -87,8 +90,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
 
     private AbstractBinder instanceBindings() {
         return new AbstractBinder() {
-            @Override
-            protected void configure() {
+            @Override protected void configure() {
                 bind(new SourcesJarExtractor()).to(SourcesJarExtractor.class);
                 bind(createCheckerFactory()).to(CheckerFactory.class);
             }
