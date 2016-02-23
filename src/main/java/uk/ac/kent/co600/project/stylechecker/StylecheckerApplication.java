@@ -5,6 +5,8 @@ import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import io.dropwizard.Application;
+import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -14,6 +16,8 @@ import uk.ac.kent.co600.project.stylechecker.api.cli.CheckerCommand;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
+
+import java.io.File;
 
 public class StylecheckerApplication extends Application<StylecheckerConfiguration> {
 
@@ -41,6 +45,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
                         new SourcesJarExtractor()
                 )
         );
+        bootstrap.addBundle(new AssetsBundle("/assets/frontend/", "/", "index.html"));
     }
 
     private CheckerFactory createCheckerFactory() {

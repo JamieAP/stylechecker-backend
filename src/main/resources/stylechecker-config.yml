@@ -1,5 +1,6 @@
 server:
   type: simple
+  rootPath: /api/*
   applicationContextPath: /stylechecker
   connector:
     type: http
