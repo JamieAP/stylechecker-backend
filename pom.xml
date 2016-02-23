@@ -8,6 +8,22 @@
     <artifactId>stylechecker-backend</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <name>Stylechecker</name>
+    <url>http://cs.kent.ac.uk</url>
+    <inceptionYear>2016</inceptionYear>
+    <organization>
+        <name>University of Kent</name>
+        <url>http://kent.ac.uk</url>
+    </organization>
+    <developers>
+        <developer>
+            <name>James Perkins</name>
+        </developer>
+        <developer>
+            <name>Jake Keeys</name>
+        </developer>
+    </developers>
+
     <build>
         <testResources>
             <testResource>
@@ -82,6 +98,21 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <configuration>
+                    <show>private</show>
+                    <nohelp>true</nohelp>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
     <properties>
         <dropwizard.version>0.9.1</dropwizard.version>
