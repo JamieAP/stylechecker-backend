@@ -34,7 +34,9 @@ $(document).ready(function () {
         var acceptedExtensions = [".jar", ".zip"];
         formData.append('file', file);
 
-        if (_.find(acceptedExtensions, function(ext) {return file.name.toLowerCase().endsWith(ext)})) {
+        if (_.find(acceptedExtensions, function (ext) {
+                return file.name.toLowerCase().endsWith(ext)
+            })) {
             $('#uploadForm > *').hide();
             $('#uploadProgress > *').show();
             submitForm(formData);
@@ -46,19 +48,18 @@ $(document).ready(function () {
 
 function submitForm(formData) {
     $.ajax({
-        xhr: function()
-        {
+        xhr: function () {
             var xhr = new window.XMLHttpRequest();
             //Upload progress
-            xhr.upload.addEventListener("progress", function(evt){
+            xhr.upload.addEventListener("progress", function (evt) {
                 if (evt.lengthComputable) {
                     var percentComplete = (evt.loaded / evt.total) * 100;
-                    $('.progress-bar').css('width', percentComplete+'%').attr('aria-valuenow', percentComplete);
+                    $('.progress-bar').css('width', percentComplete + '%').attr('aria-valuenow', percentComplete);
                 }
             }, false);
             return xhr;
         },
-        url: '/stylechecker/api/check',
+        url: 'http://stylechecker.jkeeys.co.uk:8888/stylechecker/api/check',
         type: 'POST',
         data: formData,
         async: true,
@@ -69,15 +70,16 @@ function submitForm(formData) {
             $('#uploadProgress > *').hide();
             $('#kentLogo > *').hide();
             printResults(returndata);
-            test(returndata);
+            prepareRulesAuditChartData(returndata);
+            prepareFilesAuditChartData(returndata);
         },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
             console.log("Status: " + textStatus);
             console.log("Error: " + errorThrown);
             $('#uploadProgress > *').hide();
             $('#uploadForm > *').show();
             alert("There was a problem processing your file, Please try again later");
-        },
+        }
     });
 }
 
@@ -86,7 +88,7 @@ function printResults(jsonData) {
     var template = Handlebars.compile(src);
     var processedFiles = _.map(jsonData.fileAudits, function (a) {
         return a.filePath;
-    })
+    });
 
     var data = {
         numberOfChecks: jsonData.numberOfChecks,
@@ -102,29 +104,105 @@ function printResults(jsonData) {
     $("#result").html(template(data));
 }
 
-function test(jsonData) {
-
-    //Unique Audits + Counts
-    var auditEntries = new Array();
-    _.forEach(jsonData.fileAudits, function (fileAudit) {
-        _.forEach(fileAudit.auditEntries, function (auditEntry) {
-            auditEntries.push(auditEntry.styleGuideRule);
+function prepareRulesAuditChartData(jsonData) {
+    var brokenRules = _.flatMap(jsonData.fileAudits, function (fileAudit) {
+        return _.map(fileAudit.auditEntries, function (auditEntry) {
+            return auditEntry.styleGuideRule;
         });
     });
-    var auditEntryCounts = new Map();
-    for (var i = 0; i < auditEntries.length; i++) {
-        auditEntryCounts.set(auditEntries[i], auditEntryCounts.get(auditEntries[i]) == undefined ? 1 : auditEntryCounts.get(auditEntries[i]) + 1)
-    }
-    auditEntryCounts.forEach(function (value, key) {
-        console.log(key + " = " + value);
-    }, auditEntryCounts)
 
-    //Audits per files + Counts
-    var fileAuditEntryCounts = new Map();
-    _.forEach(jsonData.fileAudits, function (fileAudit) {
-        fileAuditEntryCounts.set(fileAudit.filePath, fileAudit.auditEntries.length)
+    var brokenRulesToCounts = _.countBy(brokenRules, function (rule) {
+        return rule;
     });
-    fileAuditEntryCounts.forEach(function (value, key) {
-        console.log(key + " = " + value);
-    }, fileAuditEntryCounts)
+
+    var chartData = _.map(_.keys(brokenRulesToCounts), function (key) {
+        return {
+            name: key,
+            y: brokenRulesToCounts[key]
+        }
+    });
+    drawRulesAuditChart(chartData);
+}
+
+function drawRulesAuditChart(chartData) {
+    $('#rulesAuditChart').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Analysis by Style Guide rules'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    },
+                    formatter: function() {
+                        return this.point.name.substring(0, 3);
+                    }
+                }
+            }
+        },
+        series: [{
+            name: '# of failures',
+            colorByPoint: true,
+            data: chartData
+        }]
+    });
+}
+
+function prepareFilesAuditChartData(jsonData) {
+    var entriesPerFile = {};
+    _.forEach(jsonData.fileAudits, function (fileAudit) {
+        entriesPerFile[fileAudit.filePath] = fileAudit.auditEntries.length;
+    });
+    
+    var chartData = _.map(_.keys(entriesPerFile), function (key) {
+        return {
+            name: key,
+            y: entriesPerFile[key]
+        }
+    });
+    drawFilesAuditChart(chartData);
+}
+
+function drawFilesAuditChart(chartData) {
+    $('#filesAuditChart').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Analysis by file'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    },
+                    formatter: function() {
+                        return this.point.y
+                    }
+                }
+            }
+        },
+        series: [{
+            name: '# of failures',
+            colorByPoint: true,
+            data: chartData
+        }]
+    });
 }

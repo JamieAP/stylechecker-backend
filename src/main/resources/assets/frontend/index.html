@@ -30,8 +30,8 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 main">
                 <p class="lead text-center">This tool allows you to submit a JAR/ZIP file and get feedback on how your
                     code conforms to the <a href="http://www.bluej.org/objects-first/styleguide.html">Objects First
-                        Styleguide</a></p>
-                <form id="upload" method="post"
+                        Style Guide</a></p>
+                <form id="upload" action="http://localhost:9999/stylechecker/check" method="post"
                       enctype="multipart/form-data">
                     <input type="file" id="jarInput" class="filestyle" data-size="md" data-buttonName="btn-primary"
                            data-buttonText="Choose JAR/ZIP">
@@ -59,6 +59,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.0.0/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/4.2.1/highcharts.js"></script>
 <script type="text/javascript" src="js/bootstrap-filestyle.min.js"></script>
 <script src="js/script.js"></script>
 <script id="results-template" type="text/handlebars-template">
@@ -87,21 +88,24 @@
                     <div role="tabpanel" class="tab-pane active" id="overview">
                         <div class="col-sm-12 col-md-12">
                             <ul class="list-group">
-                                <li class="list-group-item">Number of Checks
+                                <li class="list-group-item">
+                                    Number of Rules
                                     <span class="badge">{{numberOfChecks}}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    Distinct Failed Checks
+                                    Rules Broken
                                     <span class="badge">{{uniqueFailedChecks}}</span>
                                 </li>
                                 <li class="list-group-item">
-                                    Total Failed Checks
+                                    Total Failures
                                     <span class="badge">{{totalFailedChecks}}</span>
                                 </li>
                                 <li class="list-group-item">Grade:
                                     <span class="badge">{{grade}}%</span>
                                 </li>
                             </ul>
+                            <div class="col-sm-6 col-md-6" id="rulesAuditChart"></div>
+                            <div class="col-sm-6 col-md-6" id="filesAuditChart"></div>
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="ignoredFiles">
