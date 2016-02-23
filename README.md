@@ -13,11 +13,10 @@ To build the project from source:
 
 To run the backend software:
 
-`java -jar stylechecker-backend-1.0-SNAPSHOT.jar server src/main/resources/stylechecker-config.yml`
+`java -jar stylechecker-backend-1.0-SNAPSHOT.jar server`
 
-The `stylechecker-config.yml` is found in the source tree of the Git repository but can be copied
-anywhere for deployment.
+Once running the service will start a HTTP server listening on the port 8888 and path /stylechecker
 
-You should check the configuration file is suitable for your environment before deploying.
+Configuration can be overridden using system properties. 
 
-Once running the service will start a HTTP server listening on the port (8888) and path (/stylechecker) specified in the configuration file.
+For e.g. `java -Ddw.server.connector.port=9000 -jar stylechecker-backend-1.0-SNAPSHOT.jar server`
