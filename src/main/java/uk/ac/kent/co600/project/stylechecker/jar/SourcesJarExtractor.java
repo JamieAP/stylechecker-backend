@@ -36,7 +36,6 @@ public class SourcesJarExtractor {
      * Extract Java source files from an {@link InputStream} that represents a JAR
      *
      * @param is - An InputStream backed by a JAR file.
-     * @fileName - The name of the JAR file
      */
     public ExtractionResult extract(String fileName, InputStream is) throws IOException {
         UUID sessionUuid = UUID.randomUUID();
