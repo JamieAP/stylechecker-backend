@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CO600</title>
+    <title>Stylechecker</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/dashboard.css" rel="stylesheet">
     <link href="css/page.css" rel="stylesheet">
@@ -22,7 +22,7 @@
     <div class="row">
         <div class="row" id="kentLogo">
             <div class="col-sm-8 col-sm-offset-2 col-md-8 col-md-offset-2 main">
-                <img class="center-block .img-responsive" src="img/kent50.jpg" width="300">
+                <img class="center-block .img-responsive" src="img/uksc_logo.png" width="400">
             </div>
         </div>
 
@@ -80,7 +80,10 @@
                             Files <span class="badge">{{numProcessedFiles}}</span></a>
                     </li>
                     <li role="presentation">
-                        <a href="#details" aria-controls="details" role="tab" data-toggle="tab">Details</a>
+                        <a href="#fileFeedback" aria-controls="fileFeedback" role="tab" data-toggle="tab">File Feedback</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#guideFeedback" aria-controls="guideFeedback" role="tab" data-toggle="tab">Guide Feedback</a>
                     </li>
                 </ul>
 
@@ -104,8 +107,6 @@
                                     <span class="badge">{{grade}}%</span>
                                 </li>
                             </ul>
-                            <div class="col-sm-6 col-md-6" id="rulesAuditChart"></div>
-                            <div class="col-sm-6 col-md-6" id="filesAuditChart"></div>
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="ignoredFiles">
@@ -118,15 +119,6 @@
                         </div>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="processedFiles">
-                        <div class="col-sm-12 col-md-12">
-                            <ul class="list-group">
-                                {{#each processedFiles}}
-                                <li class="list-group-item">{{this}}</li>
-                                {{/each}}
-                            </ul>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="details">
                         <div class="col-sm-12 col-md-12">
                             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                                 {{#each fileAudits}}
@@ -156,6 +148,33 @@
                                 </div>
                                 {{/each}}
                             </div>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="fileFeedback">
+                        <div class="col-sm-12 col-md-12">
+                            <div id="filesAuditChart" style="width:100%;margin: 0 auto"></div>
+                            <ul class="list-group">
+                                {{#each fileAudits}}
+                                <li class="list-group-item">
+                                    {{this.filePath}}
+                                    <span class="badge">{{failedChecksForFile this.auditEntries}}</span>
+                                </li>
+                                {{/each}}
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="guideFeedback">
+                        <div class="col-sm-12 col-md-12">
+                            <div id="rulesAuditChart" style="width:100%;margin: 0 auto"></div>
+                            <ul class="list-group">
+                                {{#each brokenRules}}
+                                <li class="list-group-item">
+                                    {{this.name}}
+                                    <span class="badge">{{this.y}}</span>
+                                </li>
+                                {{/each}}
+                            </ul>
                         </div>
                     </div>
                 </div>

@@ -59,7 +59,7 @@ function submitForm(formData) {
             }, false);
             return xhr;
         },
-        url: '/stylechecker/api/check',
+        url: 'http://stylechecker.jkeeys.co.uk:8888/stylechecker/api/check',
         type: 'POST',
         data: formData,
         async: true,
@@ -70,6 +70,7 @@ function submitForm(formData) {
             $('#uploadProgress > *').hide();
             $('#kentLogo > *').hide();
             printResults(returndata);
+            placeholder();
             prepareRulesAuditChartData(returndata);
             prepareFilesAuditChartData(returndata);
         },
@@ -90,13 +91,16 @@ function printResults(jsonData) {
         return a.filePath;
     });
 
+    var brokenRules = placeholder2(jsonData);
+
     var data = {
+        brokenRules: brokenRules,
         numberOfChecks: jsonData.numberOfChecks,
         uniqueFailedChecks: jsonData.uniqueFailedChecks,
         totalFailedChecks: jsonData.totalFailedChecks,
         ignoredFiles: jsonData.ignoredFiles,
         numIgnoredFiles: jsonData.ignoredFiles.length,
-        grade: 100 - (jsonData.uniqueFailedChecks / jsonData.numberOfChecks).toFixed(2) * 100,
+        grade: jsonData.grade,
         processedFiles: processedFiles,
         numProcessedFiles: processedFiles.length,
         fileAudits: jsonData.fileAudits
@@ -145,7 +149,7 @@ function drawRulesAuditChart(chartData) {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     },
                     formatter: function() {
-                        return this.point.name.substring(0, 3);
+                        return this.point.name.substring(0, 15) + "...";
                     }
                 }
             }
@@ -194,7 +198,7 @@ function drawFilesAuditChart(chartData) {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     },
                     formatter: function() {
-                        return this.point.y
+                        return "..." + this.point.name.substring(this.point.name.length - 15);
                     }
                 }
             }
@@ -205,4 +209,44 @@ function drawFilesAuditChart(chartData) {
             data: chartData
         }]
     });
+}
+
+function placeholder(){
+    Highcharts.getOptions().plotOptions.pie.colors = (function () {
+        var colors = [];
+        var base = Highcharts.getOptions().colors[0];
+        var i;
+        for (i = 0; i < 5; i += 1) {
+            colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
+        }
+        return colors;
+    }());
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            if (e.target.text==="File Feedback") {
+                $('#filesAuditChart').highcharts().reflow()
+            }
+            if (e.target.text==="Guide Feedback") {
+                $('#rulesAuditChart').highcharts().reflow()
+            }
+        }
+    );
+}
+
+function placeholder2(jsonData){
+    var brokenRules = _.flatMap(jsonData.fileAudits, function (fileAudit) {
+        return _.map(fileAudit.auditEntries, function (auditEntry) {
+            return auditEntry.styleGuideRule;
+        });
+    });
+    var brokenRulesToCounts = _.countBy(brokenRules, function (rule) {
+        return rule;
+    });
+    var chartData = _.map(_.keys(brokenRulesToCounts), function (key) {
+        return {
+            name: key,
+            y: brokenRulesToCounts[key]
+        }
+    });
+    return chartData;
 }
