@@ -59,7 +59,7 @@ function submitForm(formData) {
             }, false);
             return xhr;
         },
-        url: 'http://stylechecker.jkeeys.co.uk:8888/stylechecker/api/check',
+        url: 'http://localhost:8888/stylechecker/api/check',
         type: 'POST',
         data: formData,
         async: true,
