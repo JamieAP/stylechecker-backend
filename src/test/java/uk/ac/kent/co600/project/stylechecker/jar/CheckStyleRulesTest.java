@@ -8,6 +8,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
+import uk.ac.kent.co600.project.stylechecker.AuditScorer;
+import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
@@ -30,6 +32,7 @@ public class CheckStyleRulesTest {
 
     private CheckerResource checkerResource;
     private CheckerFactory checkerFactory;
+    private AuditScorer auditScorer;
 
     private ExtractionResult getTestSourceFile(String name) throws Exception {
         File file = new File("src/test/resources/CheckStyleRulesTestResources/".concat(name));
@@ -48,6 +51,7 @@ public class CheckStyleRulesTest {
                 CheckerFactory.loadConfigFromClassPath("checkstyle-configuration.xml")
         );
         this.checkerResource = new CheckerResource();
+        this.auditScorer = new AuditScorer(new StylecheckerConfiguration.Weights(0f, 0f, 0f));
     }
 
 
@@ -57,8 +61,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -73,8 +77,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(2));
@@ -92,8 +96,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -108,8 +112,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -124,8 +128,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(2));
@@ -143,8 +147,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(3));
@@ -165,8 +169,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -181,8 +185,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(4));
@@ -206,8 +210,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -223,8 +227,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(2));
@@ -243,8 +247,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -260,8 +264,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(2));
@@ -279,8 +283,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -295,8 +299,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -311,8 +315,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -327,8 +331,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -343,8 +347,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(1));
@@ -359,8 +363,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().size(), is(1));
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(2));
@@ -374,8 +378,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(12));
         assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i.getStyleGuideRule().equals("3.1 Every class has a class comment at the top") && i.getLine().equals(27)));
@@ -397,8 +401,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(7));
         assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i.getStyleGuideRule().equals("3.1 Every class has a class comment at the top") && i.getLine().equals(14)));
@@ -415,8 +419,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(4));
         assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i.getStyleGuideRule().equals("3.1 Every class has a class comment at the top") && i.getLine().equals(14)));
@@ -430,8 +434,8 @@ public class CheckStyleRulesTest {
         AuditReport report = checkerResource.createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checkerFactory.createChecker(),
-                extracted
-        );
+                extracted,
+                auditScorer);
         assertNotNull(report);
         assertThat(report.getFileAudits().get(0).getAuditEntries().size(), is(15));
         assertNotNull(Iterables.find(report.getFileAudits().get(0).getAuditEntries(), i -> i.getStyleGuideRule().equals("4.4 Import classes separately") && i.getLine().equals(4)));

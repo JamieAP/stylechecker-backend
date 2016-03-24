@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
+import uk.ac.kent.co600.project.stylechecker.AuditScorer;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAudit;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
@@ -27,9 +28,11 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
     private final ImmutableList.Builder<AuditEvent> errors = ImmutableList.builder();
     private final AtomicBoolean consumed = new AtomicBoolean(false);
     private final Integer numberOfChecks;
+    private final AuditScorer scorer;
 
-    public AuditReportGenerator(Integer numberOfChecks) {
+    public AuditReportGenerator(Integer numberOfChecks, AuditScorer scorer) {
         this.numberOfChecks = checkNotNull(numberOfChecks);
+        this.scorer = checkNotNull(scorer);
     }
 
     @Override
@@ -57,7 +60,7 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
         Long uniqueFailedChecks = checkNames.stream().distinct().count();
         Integer failuresTotal = checkNames.size();
 
-        return AuditReport.newBuilder()
+        AuditReport report = AuditReport.newBuilder()
                 .withOriginalJarName(extResult.getOriginalJarName())
                 .withFileAudits(fileAudits)
                 .withIgnoredFiles(extResult.getIgnoredFiles())
@@ -65,6 +68,8 @@ public class AuditReportGenerator extends ErrorOnlyAuditListener {
                 .withUniqueFailedChecks(uniqueFailedChecks.intValue())
                 .withTotalFailedChecks(failuresTotal)
                 .build();
+
+        return scorer.score(report);
     }
 
     private ImmutableList<FileAudit> mapEventsToFileAudits(

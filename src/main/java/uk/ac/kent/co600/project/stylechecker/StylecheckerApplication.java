@@ -7,6 +7,7 @@ import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import io.dropwizard.Application;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.setup.Bootstrap;
@@ -58,7 +59,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
     public void run(StylecheckerConfiguration conf, Environment env) throws Exception {
         env.jersey().register(CheckerResource.class);
         env.jersey().register(MultiPartFeature.class);
-        env.jersey().register(instanceBindings());
+        env.jersey().register(instanceBindings(conf));
         env.jersey().register(AllowAllCorsFilter.class);
         env.jersey().register(BluejResource.class);
         env.healthChecks().register("fakeHealthCheck", new FauxHealthCheck());
@@ -92,11 +93,12 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
         }
     }
 
-    private AbstractBinder instanceBindings() {
+    private AbstractBinder instanceBindings(StylecheckerConfiguration conf) {
         return new AbstractBinder() {
             @Override protected void configure() {
                 bind(new SourcesJarExtractor()).to(SourcesJarExtractor.class);
                 bind(createCheckerFactory()).to(CheckerFactory.class);
+                bind(new AuditScorer(conf.getWeights())).to(AuditScorer.class);
             }
         };
     }

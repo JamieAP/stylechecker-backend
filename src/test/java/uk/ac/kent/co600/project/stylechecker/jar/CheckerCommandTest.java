@@ -4,11 +4,16 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
+import uk.ac.kent.co600.project.stylechecker.AuditScorer;
+import uk.ac.kent.co600.project.stylechecker.StylecheckerApplication;
+import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.cli.CheckerCommand;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 
@@ -36,18 +41,21 @@ public class CheckerCommandTest {
     public void setUp() throws Exception {
         CheckerFactory checkerFactory = new CheckerFactory(
                 CheckerFactory.loadConfigFromClassPath("checkstyle-configuration.xml")
+
         );
         checkerCommand = new CheckerCommand("", "", checkerFactory, new SourcesJarExtractor());
     }
 
-
     public void processDirectory(String directory) throws Exception {
+        Bootstrap<StylecheckerConfiguration> bs = new Bootstrap<>(new StylecheckerApplication());
+        bs.setConfigurationSourceProvider(new ResourceConfigurationSourceProvider());
         checkerCommand.run(
-                null,
+                bs,
                 new Namespace(
                         ImmutableMap.of(
                                 "inputDir", ImmutableList.of(directory),
-                                "outputDir", ImmutableList.of(directory)
+                                "outputDir", ImmutableList.of(directory),
+                                "file", "stylechecker-config.yml"
                         )
                 )
         );

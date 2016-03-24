@@ -6,6 +6,7 @@ import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import uk.ac.kent.co600.project.stylechecker.AuditScorer;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditReportGenerator;
@@ -39,7 +40,8 @@ public class BluejResource {
             @FormDataParam("file1") InputStream inputStream,
             @FormDataParam("file1") FormDataBodyPart bodyPart,
             @Context SourcesJarExtractor extractor,
-            @Context CheckerFactory checkerFactory
+            @Context CheckerFactory checkerFactory,
+            @Context AuditScorer scorer
     ) throws IOException, CheckstyleException {
         Checker checker = checkerFactory.createChecker();
         ExtractionResult extractionResult = extractor.extract(
@@ -48,7 +50,8 @@ public class BluejResource {
         AuditReport report = createAuditReport(
                 checkerFactory.getNumberOfChecks(),
                 checker,
-                extractionResult
+                extractionResult,
+                scorer
         );
 
         StringBuilder responseBody = new StringBuilder();
@@ -63,9 +66,9 @@ public class BluejResource {
     public AuditReport createAuditReport(
             Integer numberOfChecks,
             Checker checker,
-            ExtractionResult extractionResult
-    ) throws CheckstyleException {
-        AuditReportGenerator auditor = new AuditReportGenerator(numberOfChecks);
+            ExtractionResult extractionResult,
+            AuditScorer scorer) throws CheckstyleException {
+        AuditReportGenerator auditor = new AuditReportGenerator(numberOfChecks, scorer);
         checker.addListener(auditor);
         ImmutableList<File> files = extractionResult.getExtractedFiles().stream()
                 .map(ExtractedFile::getFile)

@@ -1,3 +1,7 @@
+weights:
+  layout: .50
+  documentation: .25
+  naming: .25
 server:
   type: simple
   rootPath: /api/*

@@ -44,29 +44,6 @@ public class SourcesJarExtractor {
         return processEntries(fileName, sessionUuid, jarFile);
     }
 
-    /* TODO remove this after dev */
-    private void archiveJar(File jarFile) throws IOException {
-        Path targetDir = Paths.get(
-                URI.create("file://" + System.getProperty("user.dir") + "/archiveDir")
-        );
-        if (!targetDir.toFile().exists()) {
-            Files.createDirectory(targetDir);
-        }
-        Files.copy(
-                jarFile.toPath(),
-                Paths.get(
-                        URI.create(
-                                String.format(
-                                        "file://%s/archiveDir/%s",
-                                        System.getProperty("user.dir"),
-                                        jarFile.getName()
-                                )
-                        )
-                ),
-                StandardCopyOption.REPLACE_EXISTING
-        );
-    }
-
     private ExtractionResult processEntries(String fileName, UUID sessionUuid, JarFile jarFile) throws IOException {
         ImmutableList.Builder<String> ignoredFileNames = ImmutableList.builder();
         ImmutableList.Builder<ExtractedFile> extractedSourceFiles = ImmutableList.builder();
@@ -93,7 +70,6 @@ public class SourcesJarExtractor {
     private JarFile saveJarToFs(InputStream is, UUID sessionUuid) throws IOException {
         Path tempPathForJar = Files.createTempFile(TEMP_DIR, sessionUuid.toString(), JAR_FILE_EXTENSION);
         Files.copy(is, tempPathForJar, StandardCopyOption.REPLACE_EXISTING);
-        archiveJar(tempPathForJar.toFile());
         return new JarFile(tempPathForJar.toFile());
     }
 

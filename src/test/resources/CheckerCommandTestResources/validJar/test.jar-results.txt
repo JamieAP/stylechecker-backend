@@ -1,7 +1,19 @@
 ---------Results---------
 Total Rules: 19
 Total Errors: 12
-Mark: 63.16%
+Mark: 30.00%
+
+Documentation Rules: 2
+Documentation Errors: 2
+Documentation Mark: 0.00%
+
+Naming Rules: 5
+Naming Errors: 4
+Naming Mark: 20.00%
+
+Layout Rules: 12
+Layout Errors: 6
+Layout Mark: 50.00%
 
 ---------Summary---------
 Errors: 8 Rule: 3.1 Every class has a class comment at the top

@@ -6,10 +6,13 @@ import com.google.common.collect.Iterables;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import io.dropwizard.cli.Command;
+import io.dropwizard.cli.ConfiguredCommand;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
+import uk.ac.kent.co600.project.stylechecker.AuditScorer;
+import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditReportGenerator;
@@ -31,7 +34,7 @@ import java.util.function.Function;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class CheckerCommand extends Command {
+public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration> {
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private static final String WORKING_DIR = System.getProperty("user.dir");
@@ -70,7 +73,11 @@ public class CheckerCommand extends Command {
     }
 
     @Override
-    public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
+    protected void run(
+            Bootstrap<StylecheckerConfiguration> bootstrap,
+            Namespace namespace,
+            StylecheckerConfiguration conf
+    ) throws Exception {
         File srcDir = getSourceDirectory(namespace);
         File targetDir = getOutputDirectory(namespace);
 
@@ -80,13 +87,12 @@ public class CheckerCommand extends Command {
                         entry -> entry.toString().endsWith(ZIP) || entry.toString().endsWith(JAR)
                 )
         );
-
         System.out.printf("Found %d JAR/ZIP files %n", paths.size());
         paths.forEach(p -> System.out.println(p.getFileName().toString()));
-
+        AuditScorer scorer = new AuditScorer(conf.getWeights());
         paths.stream()
                 .map(pathToJarExtractionResult())
-                .map(this::checkSourceFiles)
+                .map(r -> checkSourceFiles(r, scorer))
                 .forEach(report -> writeToFile(report, targetDir));
     }
 
@@ -124,8 +130,11 @@ public class CheckerCommand extends Command {
         };
     }
 
-    private AuditReport checkSourceFiles(ExtractionResult srcFiles) {
-        AuditReportGenerator auditor = new AuditReportGenerator(checkerFactory.getNumberOfChecks());
+    private AuditReport checkSourceFiles(ExtractionResult srcFiles, AuditScorer scorer) {
+        AuditReportGenerator auditor = new AuditReportGenerator(
+                checkerFactory.getNumberOfChecks(),
+                scorer
+        );
 
         Checker checker = checkerFactory.createChecker();
         checker.addListener(auditor);
