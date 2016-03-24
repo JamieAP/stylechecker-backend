@@ -157,7 +157,7 @@ public class CheckerCommand extends Command {
         );
 
         try (PrintWriter writer = new PrintWriter(outputFile, UTF8.name())) {
-            writer.write(auditReport.toString());
+            auditReport.toText().forEach(writer::write);
         } catch (Exception e) {
             System.out.println(e.toString());
         }
