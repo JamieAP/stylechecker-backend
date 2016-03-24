@@ -20,6 +20,7 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
+import uk.ac.kent.co600.project.stylechecker.utils.TextReport;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +32,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -162,37 +164,12 @@ public class CheckerCommand extends Command {
                 outputFile.toPath().toAbsolutePath()
         );
 
-        ImmutableMultiset<String> failedRules = auditReport.getFileAudits().stream()
-                .flatMap(audit -> audit.getAuditEntries().stream())
-                .map(FileAuditEntry::getStyleGuideRule)
-                .collect(ImmutableCollectors.toMultiset());
+        TextReport textReport = new TextReport(auditReport);
+        textReport.generateSingleReport();
+        List<String> textReportLines = textReport.getTextReport();
 
         try (PrintWriter writer = new PrintWriter(outputFile, UTF8.name())) {
-            writer.println("---------Results---------");
-            writer.printf("Total Rules: %d%n", auditReport.getNumberOfChecks());
-            writer.printf("Total Errors: %d%n", auditReport.getUniqueFailedChecks());
-            writer.printf("Mark: %.2f%%%n", auditReport.getGrade());
-
-            writer.println("\n---------Summary---------");
-            Ordering.natural()
-                    .onResultOf(failedRules::count)
-                    .reverse()
-                    .immutableSortedCopy(failedRules.elementSet())
-                    .forEach(s -> writer.printf("Errors: %d Rule: %s%n", failedRules.count(s), s));
-
-            writer.println("\n---------Source File Details---------");
-            auditReport.getFileAudits().forEach(f -> {
-                f.getAuditEntries().forEach(a ->
-                        writer.printf(
-                                "File: %s Line: %d Col: %d Rule: %s%n",
-                                f.getFilePath(),
-                                a.getLine(),
-                                a.getColumn(),
-                                a.getStyleGuideRule()
-                        )
-                );
-                writer.println();
-            });
+            textReportLines.forEach(line -> writer.println(line));
             writer.close();
         } catch (Exception e) {
             System.out.println(e.toString());

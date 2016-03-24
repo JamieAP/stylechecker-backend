@@ -149,7 +149,7 @@ function drawRulesAuditChart(chartData) {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     },
                     formatter: function() {
-                        return this.point.name.substring(0, 15) + "...";
+                        return this.point.name.substring(0, 25) + "...";
                     }
                 }
             }
@@ -198,7 +198,7 @@ function drawFilesAuditChart(chartData) {
                         color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     },
                     formatter: function() {
-                        return "..." + this.point.name.substring(this.point.name.length - 15);
+                        return "..." + this.point.name.substring(this.point.name.length - 25);
                     }
                 }
             }

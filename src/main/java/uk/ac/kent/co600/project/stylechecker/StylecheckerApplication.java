@@ -15,6 +15,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.xml.sax.InputSource;
 import uk.ac.kent.co600.project.stylechecker.api.cli.CheckerCommand;
+import uk.ac.kent.co600.project.stylechecker.api.http.BluejResource;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
@@ -59,6 +60,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
         env.jersey().register(MultiPartFeature.class);
         env.jersey().register(instanceBindings());
         env.jersey().register(AllowAllCorsFilter.class);
+        env.jersey().register(BluejResource.class);
         env.healthChecks().register("fakeHealthCheck", new FauxHealthCheck());
     }
 
