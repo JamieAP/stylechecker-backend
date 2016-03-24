@@ -1,7 +1,10 @@
 package uk.ac.kent.co600.project.stylechecker.utils;
 
 import com.google.common.base.Function;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultiset;
 
 import java.util.stream.Collector;
 

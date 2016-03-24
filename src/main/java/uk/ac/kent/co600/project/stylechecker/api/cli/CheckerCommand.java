@@ -2,9 +2,7 @@ package uk.ac.kent.co600.project.stylechecker.api.cli;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMultiset;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import io.dropwizard.cli.Command;
@@ -13,27 +11,21 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
-import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditReportGenerator;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractedFile;
 import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
-import uk.ac.kent.co600.project.stylechecker.utils.TextReport;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -164,13 +156,8 @@ public class CheckerCommand extends Command {
                 outputFile.toPath().toAbsolutePath()
         );
 
-        TextReport textReport = new TextReport(auditReport);
-        textReport.generateSingleReport();
-        List<String> textReportLines = textReport.getTextReport();
-
         try (PrintWriter writer = new PrintWriter(outputFile, UTF8.name())) {
-            textReportLines.forEach(line -> writer.println(line));
-            writer.close();
+            writer.write(auditReport.toString());
         } catch (Exception e) {
             System.out.println(e.toString());
         }

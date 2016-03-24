@@ -1,6 +1,9 @@
 package uk.ac.kent.co600.project.stylechecker.api.model;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultiset;
+import com.google.common.collect.Ordering;
+import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
 public class AuditReport {
 
@@ -60,6 +63,46 @@ public class AuditReport {
                 * 100;
     }
 
+    public ImmutableList<String> toText() {
+        ImmutableMultiset<String> failedRules = getFileAudits().stream()
+                .flatMap(audit -> audit.getAuditEntries().stream())
+                .map(FileAuditEntry::getStyleGuideRule)
+                .collect(ImmutableCollectors.toMultiset());
+
+        ImmutableList.Builder<String> textReport = ImmutableList.builder();
+
+        textReport.add("---------Results---------");
+        textReport.add(String.format("Total Rules: %d%n", getNumberOfChecks()));
+        textReport.add(String.format("Total Errors: %d%n", getUniqueFailedChecks()));
+        textReport.add(String.format("Mark: %.2f%%%n", getGrade()));
+
+        textReport.add("\n---------Summary---------");
+
+        Ordering.natural()
+                .onResultOf(failedRules::count)
+                .reverse()
+                .immutableSortedCopy(failedRules.elementSet())
+                .forEach(s -> textReport.add(
+                        String.format("Errors: %d Rule: %s%n", failedRules.count(s), s))
+                );
+
+        textReport.add("\n---------Source File Details---------");
+        getFileAudits().forEach(f ->
+                f.getAuditEntries().forEach(a ->
+                        textReport.add(
+                                String.format("File: %s Line: %d Col: %d Rule: %s%n",
+                                        f.getFilePath(),
+                                        a.getLine(),
+                                        a.getColumn(),
+                                        a.getStyleGuideRule()
+                                )
+                        )
+                )
+        );
+
+        return textReport.build();
+    }
+
     public static final class Builder {
         private String originalJarName;
         private Iterable<FileAudit> fileAudits;
@@ -68,7 +111,8 @@ public class AuditReport {
         private Integer totalFailedChecks;
         private Iterable<String> ignoredFiles;
 
-        private Builder() {}
+        private Builder() {
+        }
 
         public Builder withOriginalJarName(String val) {
             originalJarName = val;
