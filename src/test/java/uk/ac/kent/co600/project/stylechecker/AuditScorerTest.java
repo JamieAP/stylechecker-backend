@@ -39,6 +39,6 @@ public class AuditScorerTest {
                 )
                 .build();
         report = scorer.score(report);
-        assertThat(report.getGrade().getTotalScore(), is(0.8666667F));
+        assertThat(report.getGrade().getTotalScore(), is(78.33333F));
     }
 }
