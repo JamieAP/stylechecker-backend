@@ -46,6 +46,30 @@ $(document).ready(function () {
     });
 });
 
+function defineGlobalChartParams(){
+    Highcharts.getOptions().plotOptions.pie.colors = (function () {
+        var colors = [];
+        var base = Highcharts.getOptions().colors[0];
+        var i;
+        for (i = 0; i < 5; i += 1) {
+            colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
+        }
+        return colors;
+    }());
+}
+
+function registerChartReflows(){
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            if (e.target.hash==="#fileFeedback") {
+                $('#filesAuditChart').highcharts().reflow()
+            }
+            if (e.target.hash==="#guideFeedback") {
+                $('#rulesAuditChart').highcharts().reflow()
+            }
+        }
+    );
+}
+
 function submitForm(formData) {
     $.ajax({
         xhr: function () {
@@ -59,7 +83,7 @@ function submitForm(formData) {
             }, false);
             return xhr;
         },
-        url: 'http://localhost:8888/stylechecker/api/check',
+        url: 'http://stylechecker.jkeeys.co.uk:8888/stylechecker/api/check',
         type: 'POST',
         data: formData,
         async: true,
@@ -69,8 +93,9 @@ function submitForm(formData) {
         success: function (returndata) {
             $('#uploadProgress > *').hide();
             $('#kentLogo > *').hide();
-            printResults(returndata);
-            placeholder();
+            processResults(returndata);
+            defineGlobalChartParams();
+            registerChartReflows();
             prepareRulesAuditChartData(returndata);
             prepareFilesAuditChartData(returndata);
         },
@@ -84,17 +109,30 @@ function submitForm(formData) {
     });
 }
 
-function printResults(jsonData) {
+function processResults(jsonData) {
     var src = $("#results-template").html();
     var template = Handlebars.compile(src);
     var processedFiles = _.map(jsonData.fileAudits, function (a) {
         return a.filePath;
     });
 
-    var brokenRules = placeholder2(jsonData);
+    var brokenRules = _.flatMap(jsonData.fileAudits, function (fileAudit) {
+        return _.map(fileAudit.auditEntries, function (auditEntry) {
+            return auditEntry.styleGuideRule;
+        });
+    });
+    var brokenRulesToCounts = _.countBy(brokenRules, function (rule) {
+        return rule;
+    });
+    var brokenRulesToMap = _.map(_.keys(brokenRulesToCounts), function (key) {
+        return {
+            name: key,
+            y: brokenRulesToCounts[key]
+        }
+    });
 
     var data = {
-        brokenRules: brokenRules,
+        brokenRules: brokenRulesToMap,
         numberOfChecks: jsonData.numberOfChecks,
         uniqueFailedChecks: jsonData.uniqueFailedChecks,
         totalFailedChecks: jsonData.totalFailedChecks,
@@ -103,7 +141,11 @@ function printResults(jsonData) {
         grade: jsonData.grade,
         processedFiles: processedFiles,
         numProcessedFiles: processedFiles.length,
-        fileAudits: jsonData.fileAudits
+        fileAudits: jsonData.fileAudits,
+        totalMark: jsonData.grade.totalScore.toFixed(2),
+        documentationMark: jsonData.grade.documentationScore.toFixed(2),
+        namingMark: jsonData.grade.namingScore.toFixed(2),
+        layoutMark: jsonData.grade.layoutScore.toFixed(2)
     };
     $("#result").html(template(data));
 }
@@ -211,42 +253,3 @@ function drawFilesAuditChart(chartData) {
     });
 }
 
-function placeholder(){
-    Highcharts.getOptions().plotOptions.pie.colors = (function () {
-        var colors = [];
-        var base = Highcharts.getOptions().colors[0];
-        var i;
-        for (i = 0; i < 5; i += 1) {
-            colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
-        }
-        return colors;
-    }());
-
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-            if (e.target.text==="File Feedback") {
-                $('#filesAuditChart').highcharts().reflow()
-            }
-            if (e.target.text==="Guide Feedback") {
-                $('#rulesAuditChart').highcharts().reflow()
-            }
-        }
-    );
-}
-
-function placeholder2(jsonData){
-    var brokenRules = _.flatMap(jsonData.fileAudits, function (fileAudit) {
-        return _.map(fileAudit.auditEntries, function (auditEntry) {
-            return auditEntry.styleGuideRule;
-        });
-    });
-    var brokenRulesToCounts = _.countBy(brokenRules, function (rule) {
-        return rule;
-    });
-    var chartData = _.map(_.keys(brokenRulesToCounts), function (key) {
-        return {
-            name: key,
-            y: brokenRulesToCounts[key]
-        }
-    });
-    return chartData;
-}

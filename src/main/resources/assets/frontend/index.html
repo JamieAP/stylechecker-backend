@@ -31,7 +31,7 @@
                 <p class="lead text-center">This tool allows you to submit a JAR/ZIP file and get feedback on how your
                     code conforms to the <a href="http://www.bluej.org/objects-first/styleguide.html">Objects First
                         Style Guide</a></p>
-                <form id="upload" action="http://raptor.kent.ac.uk:8888/stylechecker/check" method="post"
+                <form id="upload" action="http://stylechecker.jkeeys.co.uk:8888/stylechecker/check" method="post"
                       enctype="multipart/form-data">
                     <input type="file" id="jarInput" class="filestyle" data-size="md" data-buttonName="btn-primary"
                            data-buttonText="Choose JAR/ZIP">
@@ -72,18 +72,20 @@
                         <a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a>
                     </li>
                     <li role="presentation">
-                        <a href="#ignoredFiles" aria-controls="ignoredFiles" role="tab" data-toggle="tab">Ignored
-                            Files <span class="badge">{{numIgnoredFiles}}</span></a>
-                    </li>
-                    <li role="presentation">
                         <a href="#processedFiles" aria-controls="processedFiles" role="tab" data-toggle="tab">Processed
                             Files <span class="badge">{{numProcessedFiles}}</span></a>
                     </li>
                     <li role="presentation">
-                        <a href="#fileFeedback" aria-controls="fileFeedback" role="tab" data-toggle="tab">File Feedback</a>
+                        <a href="#fileFeedback" aria-controls="fileFeedback" role="tab" data-toggle="tab">
+                            File Summary <span class="badge">{{numProcessedFiles}}</span></a>
                     </li>
                     <li role="presentation">
-                        <a href="#guideFeedback" aria-controls="guideFeedback" role="tab" data-toggle="tab">Guide Feedback</a>
+                        <a href="#guideFeedback" aria-controls="guideFeedback" role="tab" data-toggle="tab">
+                            Style Guide Summary <span class="badge">{{uniqueFailedChecks}}</span></a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#ignoredFiles" aria-controls="ignoredFiles" role="tab" data-toggle="tab">Ignored
+                            Files <span class="badge">{{numIgnoredFiles}}</span></a>
                     </li>
                 </ul>
 
@@ -103,8 +105,56 @@
                                     Total Failures
                                     <span class="badge">{{totalFailedChecks}}</span>
                                 </li>
-                                <li class="list-group-item">Grade:
-                                    <span class="badge">{{grade}}%</span>
+                                <li class="list-group-item">Mark
+                                    <span class="badge">{{totalMark}}%</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    Documentation Rules
+                                    <span class="badge">{{grade.documentationRules}}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    Documentation Rules Broken
+                                    <span class="badge">{{grade.documentationErrors}}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    Mark
+                                    <span class="badge">{{documentationMark}}%</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    Naming Rules
+                                    <span class="badge">{{grade.namingRules}}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    Naming Rules Broken
+                                    <span class="badge">{{grade.namingErrors}}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    Mark
+                                    <span class="badge">{{namingMark}}%</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-4 col-md-4">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    Layout Rules
+                                    <span class="badge">{{grade.layoutRules}}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    Layout Rules Broken
+                                    <span class="badge">{{grade.layoutErrors}}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    Mark
+                                    <span class="badge">{{layoutMark}}%</span>
                                 </li>
                             </ul>
                         </div>

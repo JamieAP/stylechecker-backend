@@ -1,0 +1,46 @@
+package uk.ac.kent.co600.project.stylechecker;
+
+/**
+ * Created by Jake on 25/03/2016.
+ */
+public class MarkedFile {
+    private final String filename;
+    private final float documentationMark;
+    private final float namingMark;
+    private final float layoutMark;
+    private final float totalMark;
+
+    public MarkedFile(
+            String filename,
+            float documentationMark,
+            float namingMark,
+            float layoutMark,
+            float totalMark
+    ){
+        this.filename = filename;
+        this.documentationMark = documentationMark;
+        this.namingMark = namingMark;
+        this.layoutMark = layoutMark;
+        this.totalMark = totalMark;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public float getDocumentationMark() {
+        return documentationMark;
+    }
+
+    public float getNamingMark() {
+        return namingMark;
+    }
+
+    public float getLayoutMark() {
+        return layoutMark;
+    }
+
+    public float getTotalMark() {
+        return totalMark;
+    }
+}
