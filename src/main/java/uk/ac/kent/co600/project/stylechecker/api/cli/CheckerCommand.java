@@ -5,13 +5,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
-import io.dropwizard.cli.Command;
 import io.dropwizard.cli.ConfiguredCommand;
 import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import uk.ac.kent.co600.project.stylechecker.AuditScorer;
+import uk.ac.kent.co600.project.stylechecker.MarkedFile;
 import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
@@ -21,14 +21,13 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -95,10 +94,21 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         System.out.printf("Found %d JAR/ZIP files %n", paths.size());
         paths.forEach(p -> System.out.println(p.getFileName().toString()));
         AuditScorer scorer = new AuditScorer(conf.getWeights());
+        List<MarkedFile> markedFiles = new ArrayList<MarkedFile>();
         paths.stream()
                 .map(pathToJarExtractionResult())
                 .map(r -> checkSourceFiles(r, scorer))
-                .forEach(report -> writeToFile(report, targetDir));
+                .forEach(report -> {
+                    writeToFile(report, targetDir);
+                    markedFiles.add(new MarkedFile(
+                            report.getOriginalJarName(),
+                            report.getGrade().getDocumentationScore(),
+                            report.getGrade().getNamingScore(),
+                            report.getGrade().getLayoutScore(),
+                            report.getGrade().getTotalScore()
+                            ));
+                });
+        writeSummaryToFile(markedFiles, targetDir);
     }
 
     private File getSourceDirectory(Namespace namespace) throws IOException {
@@ -176,4 +186,30 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
             System.out.println(e.toString());
         }
     }
+
+    private void writeSummaryToFile(List<MarkedFile> markedFiles, File outputDirectory){
+        File outputFile = new File(
+                outputDirectory, "results.txt"
+        );
+
+        System.out.printf(
+                "Writing Summary to %s \n",
+                outputFile.toPath().toAbsolutePath()
+        );
+
+        try (PrintWriter writer = new PrintWriter(outputFile, UTF8.name())) {
+            writer.write("---------Marking Summary---------\r\n\r\n");
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
+        markedFiles.forEach(markedFile -> {
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFile, true)))) {
+                markedFile.toText().forEach(writer::write);
+            } catch (Exception e) {
+                System.out.println(e.toString());
+            }
+        });
+    }
+
 }

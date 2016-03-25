@@ -1,5 +1,7 @@
 package uk.ac.kent.co600.project.stylechecker;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Created by Jake on 25/03/2016.
  */
@@ -42,5 +44,17 @@ public class MarkedFile {
 
     public float getTotalMark() {
         return totalMark;
+    }
+
+    public ImmutableList<String> toText(){
+        ImmutableList.Builder<String> textReport = ImmutableList.builder();
+        textReport.add(String.format("---------%s---------%n", getFilename()));
+        textReport.add(String.format("Documentation Mark:%.2f%%%n", getDocumentationMark()));
+        textReport.add(String.format("Naming Mark: %.2f%%%n", getNamingMark()));
+        textReport.add(String.format("Layout Mark: %.2f%%%n", getLayoutMark()));
+        textReport.add(String.format("Total Mark: %.2f%%%n", getTotalMark()));
+        textReport.add("\r\n");
+
+        return textReport.build();
     }
 }

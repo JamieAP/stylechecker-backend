@@ -77,28 +77,28 @@ public class AuditReport {
 
         ImmutableList.Builder<String> textReport = ImmutableList.builder();
 
-        textReport.add("---------Results---------\n");
+        textReport.add("---------Results---------\r\n");
         textReport.add(String.format("Total Rules: %d%n", getNumberOfChecks()));
         textReport.add(String.format("Total Errors: %d%n", getUniqueFailedChecks()));
         textReport.add(String.format("Mark: %.2f%%%n", getGrade().getTotalScore()));
-        textReport.add("\n");
+        textReport.add("\r\n");
 
         textReport.add(String.format("Documentation Rules: %d%n", getGrade().getDocumentationRules()));
         textReport.add(String.format("Documentation Errors: %d%n", getGrade().getDocumentationErrors()));
         textReport.add(String.format("Documentation Mark: %.2f%%%n", getGrade().getDocumentationScore()));
-        textReport.add("\n");
+        textReport.add("\r\n");
 
         textReport.add(String.format("Naming Rules: %d%n", getGrade().getNamingRules()));
         textReport.add(String.format("Naming Errors: %d%n", getGrade().getNamingErrors()));
         textReport.add(String.format("Naming Mark: %.2f%%%n", getGrade().getNamingScore()));
-        textReport.add("\n");
+        textReport.add("\r\n");
 
         textReport.add(String.format("Layout Rules: %d%n", getGrade().getLayoutRules()));
         textReport.add(String.format("Layout Errors: %d%n", getGrade().getLayoutErrors()));
         textReport.add(String.format("Layout Mark: %.2f%%%n", getGrade().getLayoutScore()));
-        textReport.add("\n");
+        textReport.add("\r\n");
 
-        textReport.add("---------Summary---------\n");
+        textReport.add("---------Summary---------\r\n");
         Ordering.natural()
                 .onResultOf(failedRules::count)
                 .reverse()
@@ -106,9 +106,9 @@ public class AuditReport {
                 .forEach(s -> textReport.add(
                         String.format("Errors: %d Rule: %s%n", failedRules.count(s), s))
                 );
-        textReport.add("\n");
+        textReport.add("\r\n");
 
-        textReport.add("---------Source File Details---------\n");
+        textReport.add("---------Source File Details---------\r\n");
         getFileAudits().forEach(f -> {
                 f.getAuditEntries().forEach(a ->
                         textReport.add(
@@ -120,7 +120,7 @@ public class AuditReport {
                                 )
                         )
                 );
-                textReport.add("\n");
+                textReport.add("\r\n");
         });
 
         return textReport.build();

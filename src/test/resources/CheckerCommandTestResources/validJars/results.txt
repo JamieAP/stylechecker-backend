@@ -1,0 +1,6 @@
+---------test.jar---------
+Documentation Mark:0.00%
+Naming Mark: 20.00%
+Layout Mark: 50.00%
+Total Mark: 30.00%
+
