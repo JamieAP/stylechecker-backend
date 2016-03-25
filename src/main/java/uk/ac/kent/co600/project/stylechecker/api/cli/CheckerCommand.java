@@ -70,6 +70,11 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
                 .setDefault(WORKING_DIR)
                 .dest("outputDir")
                 .help("The directory to output reports to");
+        subparser.addArgument("--conf")
+                .action(Arguments.store())
+                .dest("file")
+                .required(true)
+                .help("The configuration file");
     }
 
     @Override
