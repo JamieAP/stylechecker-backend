@@ -150,14 +150,14 @@ function processResults(jsonData) {
         totalFailedChecks: jsonData.totalFailedChecks,
         ignoredFiles: jsonData.ignoredFiles,
         numIgnoredFiles: jsonData.ignoredFiles.length,
-        grade: jsonData.grade,
+        grade: jsonData.score,
         processedFiles: processedFiles,
         numProcessedFiles: processedFiles.length,
         fileAudits: jsonData.fileAudits,
-        totalMark: jsonData.grade.totalScore.toFixed(2),
-        documentationMark: jsonData.grade.documentationScore.toFixed(2),
-        namingMark: jsonData.grade.namingScore.toFixed(2),
-        layoutMark: jsonData.grade.layoutScore.toFixed(2)
+        totalMark: jsonData.score.totalScore.toFixed(2),
+        documentationMark: jsonData.score.documentationScore.toFixed(2),
+        namingMark: jsonData.score.namingScore.toFixed(2),
+        layoutMark: jsonData.score.layoutScore.toFixed(2)
     };
     $("#result").html(template(data));
 }
