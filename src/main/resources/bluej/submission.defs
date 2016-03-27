@@ -1,4 +1,4 @@
 Submit for Style Checking {
     .file.jar=test.jar;
-    .transport=http://stylechecker.jkeeys.co.uk:8888/stylechecker/api/bluej;
+    .transport=http://stylechecker.jkeeys.co.uk:8888/stylechecker/api/check;
 }
