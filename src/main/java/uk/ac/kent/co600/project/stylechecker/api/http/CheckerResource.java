@@ -6,6 +6,7 @@ import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.glassfish.jersey.process.internal.RequestScoped;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditScorer;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
@@ -15,6 +16,7 @@ import uk.ac.kent.co600.project.stylechecker.jar.ExtractionResult;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.ImmutableCollectors;
 
+import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -26,10 +28,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+@RequestScoped
+@Path("/check")
 public class CheckerResource {
 
     @POST
-    @Path("/check")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     public AuditReport auditSourceCodeJson(
@@ -54,7 +57,6 @@ public class CheckerResource {
     }
 
     @POST
-    @Path("/bluej")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_HTML)
     public Response auditSourceCodeHtml(
