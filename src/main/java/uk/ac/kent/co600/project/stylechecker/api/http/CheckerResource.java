@@ -77,6 +77,7 @@ public class CheckerResource {
                 extractionResult,
                 scorer
         );
+        extractionResult.getExtractedFiles().forEach(f -> f.getFile().delete());
         return Response.ok(Joiner.on("<br>").join(report.toText())).build();
     }
 
