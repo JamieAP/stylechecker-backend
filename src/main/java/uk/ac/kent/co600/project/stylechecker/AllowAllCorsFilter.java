@@ -11,6 +11,9 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
+/**
+ * Handles Cross Origin Resource Sharing HTTP headers, see https://en.wikipedia.org/wiki/Cross-origin_resource_sharing
+ */
 @Provider
 public class AllowAllCorsFilter implements ContainerResponseFilter {
 
