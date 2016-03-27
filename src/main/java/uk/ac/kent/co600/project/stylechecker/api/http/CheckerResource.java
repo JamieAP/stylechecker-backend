@@ -21,17 +21,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-@Path("/check")
 public class CheckerResource {
 
     @POST
+    @Path("/check")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public AuditReport auditSourceCode(
+    public AuditReport auditSourceCodeJson(
             @FormDataParam("file") InputStream inputStream,
             @FormDataParam("file") FormDataBodyPart bodyPart,
             @Context SourcesJarExtractor extractor,
@@ -50,6 +51,36 @@ public class CheckerResource {
         );
         extractionResult.getExtractedFiles().forEach(f -> f.getFile().delete());
         return report;
+    }
+
+    @POST
+    @Path("/bluej")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.TEXT_HTML)
+    public Response auditSourceCodeHtml(
+            @FormDataParam("file1") InputStream inputStream,
+            @FormDataParam("file1") FormDataBodyPart bodyPart,
+            @Context SourcesJarExtractor extractor,
+            @Context CheckerFactory checkerFactory,
+            @Context AuditScorer scorer
+    ) throws IOException, CheckstyleException {
+        Checker checker = checkerFactory.createChecker();
+        ExtractionResult extractionResult = extractor.extract(
+                bodyPart.getContentDisposition().getFileName(), inputStream
+        );
+        AuditReport report = createAuditReport(
+                checkerFactory.getNumberOfChecks(),
+                checker,
+                extractionResult,
+                scorer
+        );
+
+        StringBuilder responseBody = new StringBuilder();
+        responseBody.append("Click <a href=\"http://stylechecker.jkeeys.co.uk\">HERE</a> to " +
+                "pretty print your results<br><br>");
+
+        report.toText().forEach(line -> responseBody.append(line).append("<br>"));
+        return Response.ok(responseBody.toString(), MediaType.TEXT_HTML_TYPE).build();
     }
 
     @VisibleForTesting
