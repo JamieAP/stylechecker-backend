@@ -17,30 +17,6 @@ public class Score {
     private final int namingRules;
     private final int layoutRules;
 
-    private Score (
-            Float layoutScore,
-            Float namingScore,
-            Float documentationScore,
-            StylecheckerConfiguration.Weights weights,
-            int documentationErrors,
-            int namingErrors,
-            int layoutErrors,
-            int documentationRules,
-            int namingRules,
-            int layoutRules
-    ) {
-        this.layoutScore = layoutScore;
-        this.namingScore = namingScore;
-        this.documentationScore = documentationScore;
-        this.weights = weights;
-        this.documentationErrors = documentationErrors;
-        this.namingErrors = namingErrors;
-        this.layoutErrors = layoutErrors;
-        this.documentationRules = documentationRules;
-        this.namingRules = namingRules;
-        this.layoutRules = layoutRules;
-    }
-
     private Score(Builder builder) {
         documentationScore = builder.documentationScore;
         namingScore = builder.namingScore;
