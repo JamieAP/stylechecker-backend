@@ -49,7 +49,12 @@ public class AuditScorer {
     }
 
     public AuditReport score(AuditReport report) {
-        List<String> failedCategories = distinctFailuresByCategory(report);
+        List<String> failedCategories = report.getFileAudits().stream()
+                .flatMap(fa -> fa.getAuditEntries().stream())
+                .map(FileAuditEntry::getStyleGuideRule)
+                .distinct()
+                .map(r -> Iterables.getOnlyElement(RULE_TO_CATEGORY.get(r.substring(0, 3))))
+                .collect(Collectors.toList());
         return AuditReport.newBuilder(report)
                 .withGrade(calculateScore(failedCategories))
                 .build();
@@ -95,20 +100,5 @@ public class AuditScorer {
                 .withNamingScore(namingScore)
                 .withWeights(weights)
                 .build();
-    }
-
-    /**
-     * Projects the category of distinct broken Style Guide rules
-     *
-     * @param report - a report
-     * @return categories - the list of categories
-     */
-    private List<String> distinctFailuresByCategory(AuditReport report) {
-        return report.getFileAudits().stream()
-                .flatMap(fa -> fa.getAuditEntries().stream())
-                .map(FileAuditEntry::getStyleGuideRule)
-                .distinct()
-                .map(r -> Iterables.getOnlyElement(RULE_TO_CATEGORY.get(r.substring(0, 3))))
-                .collect(Collectors.toList());
     }
 }
