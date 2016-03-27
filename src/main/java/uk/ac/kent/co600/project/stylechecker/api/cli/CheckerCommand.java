@@ -11,7 +11,7 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditScorer;
-import uk.ac.kent.co600.project.stylechecker.MarkedFile;
+import uk.ac.kent.co600.project.stylechecker.api.model.MarkedFile;
 import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
