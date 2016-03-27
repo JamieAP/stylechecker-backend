@@ -1,6 +1,7 @@
 package uk.ac.kent.co600.project.stylechecker.api.http;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
@@ -76,13 +77,7 @@ public class CheckerResource {
                 extractionResult,
                 scorer
         );
-
-        StringBuilder responseBody = new StringBuilder();
-        responseBody.append("Click <a href=\"http://stylechecker.jkeeys.co.uk\">HERE</a> to " +
-                "pretty print your results<br><br>");
-
-        report.toText().forEach(line -> responseBody.append(line).append("<br>"));
-        return Response.ok(responseBody.toString(), MediaType.TEXT_HTML_TYPE).build();
+        return Response.ok(Joiner.on("<br>").join(report.toText())).build();
     }
 
     @VisibleForTesting
