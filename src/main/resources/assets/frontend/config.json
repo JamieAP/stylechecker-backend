@@ -1,0 +1,11 @@
+{
+  "server": {
+    "protocol": "http",
+    "hostname": "stylechecker.jkeeys.co.uk",
+    "port": "8888",
+    "contextRoot": "/stylechecker",
+    "rootPath": "/api",
+    "apiEndpoint": "/check"
+  }
+}
+

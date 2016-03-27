@@ -1,3 +1,5 @@
+var config = {};
+
 Handlebars.registerHelper('firstLine', function (line, opts) {
     return line - 2;
 });
@@ -26,6 +28,10 @@ $(document).on('change', '.btn-file :file', function () {
 });
 
 $(document).ready(function () {
+    $.getJSON('config.json', function(data) {
+        config = data;
+    });
+    
     $('#uploadProgress > *').hide();
     $("#upload").submit(function (event) {
         event.preventDefault();
@@ -83,7 +89,13 @@ function submitForm(formData) {
             }, false);
             return xhr;
         },
-        url: 'http://stylechecker.jkeeys.co.uk:8888/stylechecker/api/check',
+        url: 
+            config.server.protocol + '://' +
+            config.server.hostname + ':' +
+            config.server.port +
+            config.server.contextRoot +
+            config.server.rootPath +
+            config.server.apiEndpoint,
         type: 'POST',
         data: formData,
         async: true,
