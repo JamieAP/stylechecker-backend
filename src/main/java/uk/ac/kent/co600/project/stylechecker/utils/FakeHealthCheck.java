@@ -7,7 +7,7 @@ import com.codahale.metrics.health.HealthCheck;
  * This application has no health checkable functionality and the
  * check would not be monitored regardless
  */
-public class FauxHealthCheck extends HealthCheck {
+public class FakeHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {

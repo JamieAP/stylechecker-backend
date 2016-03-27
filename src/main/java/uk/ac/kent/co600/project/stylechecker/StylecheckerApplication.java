@@ -16,7 +16,7 @@ import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditScorer;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
-import uk.ac.kent.co600.project.stylechecker.utils.FauxHealthCheck;
+import uk.ac.kent.co600.project.stylechecker.utils.FakeHealthCheck;
 
 public class StylecheckerApplication extends Application<StylecheckerConfiguration> {
 
@@ -32,7 +32,7 @@ public class StylecheckerApplication extends Application<StylecheckerConfigurati
         env.jersey().register(MultiPartFeature.class);
         env.jersey().register(instanceBindings(conf));
         env.jersey().register(AllowAllCorsFilter.class);
-        env.healthChecks().register("fakeHealthCheck", new FauxHealthCheck());
+        env.healthChecks().register("fakeHealthCheck", new FakeHealthCheck());
     }
 
     @Override
