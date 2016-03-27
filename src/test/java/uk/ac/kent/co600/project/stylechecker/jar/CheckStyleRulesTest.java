@@ -8,7 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
-import uk.ac.kent.co600.project.stylechecker.AuditScorer;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditScorer;
 import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;

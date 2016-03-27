@@ -5,6 +5,7 @@ import org.junit.Test;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAudit;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditScorer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

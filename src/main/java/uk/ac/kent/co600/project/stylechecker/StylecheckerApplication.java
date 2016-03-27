@@ -18,6 +18,7 @@ import uk.ac.kent.co600.project.stylechecker.api.cli.CheckerCommand;
 import uk.ac.kent.co600.project.stylechecker.api.http.BluejResource;
 import uk.ac.kent.co600.project.stylechecker.api.http.CheckerResource;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditScorer;
 import uk.ac.kent.co600.project.stylechecker.jar.SourcesJarExtractor;
 import uk.ac.kent.co600.project.stylechecker.utils.FauxHealthCheck;
 

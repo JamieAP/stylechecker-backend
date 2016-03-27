@@ -10,7 +10,7 @@ import io.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-import uk.ac.kent.co600.project.stylechecker.AuditScorer;
+import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditScorer;
 import uk.ac.kent.co600.project.stylechecker.MarkedFile;
 import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
@@ -94,7 +94,7 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         System.out.printf("Found %d JAR/ZIP files %n", paths.size());
         paths.forEach(p -> System.out.println(p.getFileName().toString()));
         AuditScorer scorer = new AuditScorer(conf.getWeights());
-        List<MarkedFile> markedFiles = new ArrayList<MarkedFile>();
+        ImmutableList.Builder<MarkedFile> markedFiles = ImmutableList.builder();
         paths.stream()
                 .map(pathToJarExtractionResult())
                 .map(r -> checkSourceFiles(r, scorer))
@@ -106,9 +106,9 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
                             report.getGrade().getNamingScore(),
                             report.getGrade().getLayoutScore(),
                             report.getGrade().getTotalScore()
-                            ));
+                    ));
                 });
-        writeSummaryToFile(markedFiles, targetDir);
+        writeSummaryToFile(markedFiles.build(), targetDir);
     }
 
     private File getSourceDirectory(Namespace namespace) throws IOException {
@@ -187,7 +187,7 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         }
     }
 
-    private void writeSummaryToFile(List<MarkedFile> markedFiles, File outputDirectory){
+    private void writeSummaryToFile(List<MarkedFile> markedFiles, File outputDirectory) {
         File outputFile = new File(
                 outputDirectory, "results.txt"
         );

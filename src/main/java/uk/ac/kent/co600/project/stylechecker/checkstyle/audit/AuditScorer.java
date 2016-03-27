@@ -1,7 +1,8 @@
-package uk.ac.kent.co600.project.stylechecker;
+package uk.ac.kent.co600.project.stylechecker.checkstyle.audit;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.api.model.FileAuditEntry;
 import uk.ac.kent.co600.project.stylechecker.api.model.Score;

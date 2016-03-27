@@ -2,10 +2,9 @@ package uk.ac.kent.co600.project.stylechecker;
 
 import com.google.common.collect.ImmutableList;
 
-/**
- * Created by Jake on 25/03/2016.
- */
+
 public class MarkedFile {
+
     private final String filename;
     private final float documentationMark;
     private final float namingMark;
@@ -18,7 +17,7 @@ public class MarkedFile {
             float namingMark,
             float layoutMark,
             float totalMark
-    ){
+    ) {
         this.filename = filename;
         this.documentationMark = documentationMark;
         this.namingMark = namingMark;
