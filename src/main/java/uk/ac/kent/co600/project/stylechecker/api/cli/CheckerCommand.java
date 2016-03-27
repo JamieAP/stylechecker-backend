@@ -11,7 +11,6 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.audit.AuditScorer;
-import uk.ac.kent.co600.project.stylechecker.api.model.MarkedFile;
 import uk.ac.kent.co600.project.stylechecker.StylecheckerConfiguration;
 import uk.ac.kent.co600.project.stylechecker.api.model.AuditReport;
 import uk.ac.kent.co600.project.stylechecker.checkstyle.CheckerFactory;
@@ -26,7 +25,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -93,21 +91,17 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         System.out.printf("Found %d JAR/ZIP files %n", paths.size());
         paths.forEach(p -> System.out.println(p.getFileName().toString()));
         AuditScorer scorer = new AuditScorer(conf.getWeights());
-        ImmutableList.Builder<MarkedFile> markedFiles = ImmutableList.builder();
-        paths.stream()
+        ImmutableList<AuditReport> reports = paths.stream()
                 .map(pathToJarExtractionResult())
                 .map(r -> checkSourceFiles(r, scorer))
-                .forEach(report -> {
-                    writeToFile(report, targetDir);
-                    markedFiles.add(new MarkedFile(
-                            report.getOriginalJarName(),
-                            report.getGrade().getDocumentationScore(),
-                            report.getGrade().getNamingScore(),
-                            report.getGrade().getLayoutScore(),
-                            report.getGrade().getTotalScore()
-                    ));
-                });
-        writeSummaryToFile(markedFiles.build(), targetDir);
+                .collect(ImmutableCollectors.toList());
+
+        reports.forEach(r -> writeToFile(r, targetDir));
+        System.out.printf(
+                "Writing Summary to %s \n",
+                targetDir.toPath().toAbsolutePath()
+        );
+        reports.forEach(r -> writeSummary(r, targetDir));
     }
 
     private File getSourceDirectory(Namespace namespace) throws IOException {
@@ -186,29 +180,19 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         }
     }
 
-    private void writeSummaryToFile(List<MarkedFile> markedFiles, File outputDirectory) {
+    private void writeSummary(AuditReport report, File outputDirectory) {
         File outputFile = new File(
                 outputDirectory, "results.txt"
         );
-
-        System.out.printf(
-                "Writing Summary to %s \n",
-                outputFile.toPath().toAbsolutePath()
-        );
-
-        try (PrintWriter writer = new PrintWriter(outputFile, UTF8.name())) {
+        try (PrintWriter writer = new PrintWriter(new FileOutputStream(outputFile, true))) {
             writer.write("---------Marking Summary---------\r\n\r\n");
+            writer.println(String.format("---------%s---------%n", report.getOriginalJarName()));
+            writer.println(String.format("Documentation Mark:%.2f%%", report.getGrade().getDocumentationScore()));
+            writer.println(String.format("Naming Mark: %.2f%%", report.getGrade().getNamingScore()));
+            writer.println(String.format("Layout Mark: %.2f%%", report.getGrade().getLayoutScore()));
+            writer.println(String.format("Total Mark: %.2f%%", report.getGrade().getTotalScore()));
         } catch (Exception e) {
             System.out.println(e.toString());
         }
-
-        markedFiles.forEach(markedFile -> {
-            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFile, true)))) {
-                markedFile.toText().forEach(writer::write);
-            } catch (Exception e) {
-                System.out.println(e.toString());
-            }
-        });
     }
-
 }
