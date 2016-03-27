@@ -7,6 +7,11 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Configuration file bean, instances of this class are typically constructed by
+ * deserialising a YAML config file. See https://dropwizard.github.io/dropwizard/0.9.1/docs/manual/core.html#configuration
+ * for more details
+ */
 public class StylecheckerConfiguration extends Configuration {
 
     @NotNull
