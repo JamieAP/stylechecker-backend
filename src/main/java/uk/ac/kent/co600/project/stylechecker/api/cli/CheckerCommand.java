@@ -30,6 +30,9 @@ import java.util.function.Function;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Implementation of the CLI command to allow bulk checking of JARs for style compliance.
+ */
 public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration> {
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -96,7 +99,7 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
                 .map(r -> checkSourceFiles(r, scorer))
                 .collect(ImmutableCollectors.toList());
 
-        reports.forEach(r -> writeToFile(r, targetDir));
+        reports.forEach(r -> writeReport(r, targetDir));
         System.out.printf(
                 "Writing Summary to %s \n",
                 targetDir.toPath().toAbsolutePath()
@@ -104,6 +107,9 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         reports.forEach(r -> writeSummary(r, targetDir));
     }
 
+    /*
+        Pulls the input directory from the command line args and checks it is an existing directory
+     */
     private File getSourceDirectory(Namespace namespace) throws IOException {
         String path = Iterables.getOnlyElement(namespace.get(INPUT_DIR));
         File inputDir = Paths.get(path).toFile();
@@ -115,6 +121,9 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         return inputDir;
     }
 
+    /*
+        Pulls the output directory from the command line args, creating it if it does not exist
+     */
     private File getOutputDirectory(Namespace namespace) {
         try {
             String path = Iterables.getOnlyElement(namespace.get(OUTPUT_DIR));
@@ -163,7 +172,10 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         return report;
     }
 
-    private void writeToFile(AuditReport auditReport, File outputDirectory) {
+    /*
+        Prints a detailed report of an audit to a file in the output directory
+     */
+    private void writeReport(AuditReport auditReport, File outputDirectory) {
         File outputFile = new File(
                 outputDirectory, auditReport.getOriginalJarName() + RESULTS_FILE_SUFFIX
         );
@@ -180,6 +192,9 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         }
     }
 
+    /*
+        Prints a summarized form of an AuditReport to the summary file
+     */
     private void writeSummary(AuditReport report, File outputDirectory) {
         File outputFile = new File(
                 outputDirectory, "results.txt"
