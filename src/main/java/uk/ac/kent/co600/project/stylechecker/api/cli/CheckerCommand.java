@@ -202,10 +202,10 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(outputFile, true))) {
             writer.write("---------Marking Summary---------\r\n\r\n");
             writer.println(String.format("---------%s---------%n", report.getOriginalJarName()));
-            writer.println(String.format("Documentation Mark:%.2f%%", report.getGrade().getDocumentationScore()));
-            writer.println(String.format("Naming Mark: %.2f%%", report.getGrade().getNamingScore()));
-            writer.println(String.format("Layout Mark: %.2f%%", report.getGrade().getLayoutScore()));
-            writer.println(String.format("Total Mark: %.2f%%", report.getGrade().getTotalScore()));
+            writer.println(String.format("Documentation Mark:%.2f%%", report.getScore().getDocumentationScore()));
+            writer.println(String.format("Naming Mark: %.2f%%", report.getScore().getNamingScore()));
+            writer.println(String.format("Layout Mark: %.2f%%", report.getScore().getLayoutScore()));
+            writer.println(String.format("Total Mark: %.2f%%", report.getScore().getTotalScore()));
         } catch (Exception e) {
             System.out.println(e.toString());
         }

@@ -13,7 +13,7 @@ public class AuditReport {
     private final Integer uniqueFailedChecks;
     private final Integer totalFailedChecks;
     private final ImmutableList<String> ignoredFiles;
-    private final Score grade;
+    private final Score score;
 
     public AuditReport(
             String originalJarName,
@@ -22,7 +22,7 @@ public class AuditReport {
             Integer totalFailedChecks,
             Iterable<FileAudit> fileAudits,
             Iterable<String> ignoredFiles,
-            Score grade
+            Score score
     ) {
         this.originalJarName = originalJarName;
         this.numberOfChecks = numberOfChecks;
@@ -30,7 +30,7 @@ public class AuditReport {
         this.totalFailedChecks = totalFailedChecks;
         this.fileAudits = fileAudits == null ? null : ImmutableList.copyOf(fileAudits);
         this.ignoredFiles = ignoredFiles == null ? null : ImmutableList.copyOf(ignoredFiles);
-        this.grade = grade;
+        this.score = score;
     }
 
     public static Builder newBuilder() {
@@ -65,8 +65,8 @@ public class AuditReport {
         return ignoredFiles;
     }
 
-    public Score getGrade() {
-        return grade;
+    public Score getScore() {
+        return score;
     }
 
     public ImmutableList<String> toText() {
@@ -80,22 +80,22 @@ public class AuditReport {
         textReport.add("---------Results---------\r\n");
         textReport.add(String.format("Total Rules: %d%n", getNumberOfChecks()));
         textReport.add(String.format("Total Errors: %d%n", getUniqueFailedChecks()));
-        textReport.add(String.format("Mark: %.2f%%%n", getGrade().getTotalScore()));
+        textReport.add(String.format("Mark: %.2f%%%n", getScore().getTotalScore()));
         textReport.add("\r\n");
 
-        textReport.add(String.format("Documentation Rules: %d%n", getGrade().getDocumentationRules()));
-        textReport.add(String.format("Documentation Errors: %d%n", getGrade().getDocumentationErrors()));
-        textReport.add(String.format("Documentation Mark: %.2f%%%n", getGrade().getDocumentationScore()));
+        textReport.add(String.format("Documentation Rules: %d%n", getScore().getDocumentationRules()));
+        textReport.add(String.format("Documentation Errors: %d%n", getScore().getDocumentationErrors()));
+        textReport.add(String.format("Documentation Mark: %.2f%%%n", getScore().getDocumentationScore()));
         textReport.add("\r\n");
 
-        textReport.add(String.format("Naming Rules: %d%n", getGrade().getNamingRules()));
-        textReport.add(String.format("Naming Errors: %d%n", getGrade().getNamingErrors()));
-        textReport.add(String.format("Naming Mark: %.2f%%%n", getGrade().getNamingScore()));
+        textReport.add(String.format("Naming Rules: %d%n", getScore().getNamingRules()));
+        textReport.add(String.format("Naming Errors: %d%n", getScore().getNamingErrors()));
+        textReport.add(String.format("Naming Mark: %.2f%%%n", getScore().getNamingScore()));
         textReport.add("\r\n");
 
-        textReport.add(String.format("Layout Rules: %d%n", getGrade().getLayoutRules()));
-        textReport.add(String.format("Layout Errors: %d%n", getGrade().getLayoutErrors()));
-        textReport.add(String.format("Layout Mark: %.2f%%%n", getGrade().getLayoutScore()));
+        textReport.add(String.format("Layout Rules: %d%n", getScore().getLayoutRules()));
+        textReport.add(String.format("Layout Errors: %d%n", getScore().getLayoutErrors()));
+        textReport.add(String.format("Layout Mark: %.2f%%%n", getScore().getLayoutScore()));
         textReport.add("\r\n");
 
         textReport.add("---------Summary---------\r\n");
@@ -133,7 +133,7 @@ public class AuditReport {
         private Integer uniqueFailedChecks;
         private Integer totalFailedChecks;
         private Iterable<String> ignoredFiles;
-        private Score grade;
+        private Score score;
 
         private Builder() {
         }
@@ -145,7 +145,7 @@ public class AuditReport {
             this.uniqueFailedChecks = copy.uniqueFailedChecks;
             this.totalFailedChecks = copy.totalFailedChecks;
             this.ignoredFiles = copy.ignoredFiles;
-            this.grade = copy.grade;
+            this.score = copy.score;
         }
 
         public Builder withOriginalJarName(String val) {
@@ -178,8 +178,8 @@ public class AuditReport {
             return this;
         }
 
-        public Builder withGrade(Score grade) {
-            this.grade = grade;
+        public Builder withGrade(Score score) {
+            this.score = score;
             return this;
         }
 
@@ -191,7 +191,7 @@ public class AuditReport {
                     totalFailedChecks,
                     fileAudits,
                     ignoredFiles,
-                    grade
+                    score
             );
         }
     }

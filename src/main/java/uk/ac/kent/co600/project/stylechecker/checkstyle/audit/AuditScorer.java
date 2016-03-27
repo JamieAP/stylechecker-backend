@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Performs the scoring/grading calculations of an {@link AuditReport}
+ */
 public class AuditScorer {
 
     private static final String LAYOUT = "LAYOUT";
@@ -46,25 +49,29 @@ public class AuditScorer {
     }
 
     public AuditReport score(AuditReport report) {
-        AuditReport.Builder builder = AuditReport.newBuilder(report);
         List<String> failedCategories = distinctFailuresByCategory(report);
+        return AuditReport.newBuilder(report)
+                .withGrade(calculateScore(failedCategories))
+                .build();
+    }
 
+    private Score calculateScore(List<String> failedCategories) {
         Float documentationScore = 100f;
         Float namingScore = 100f;
         Float layoutScore = 100f;
 
-        int namingCategories =  RULE_TO_CATEGORY.inverse().get(NAMING).size();
-        int documentationCategories =  RULE_TO_CATEGORY.inverse().get(DOCUMENTATION).size();
-        int layoutCategories =  RULE_TO_CATEGORY.inverse().get(LAYOUT).size();
+        int namingCategories = RULE_TO_CATEGORY.inverse().get(NAMING).size();
+        int documentationCategories = RULE_TO_CATEGORY.inverse().get(DOCUMENTATION).size();
+        int layoutCategories = RULE_TO_CATEGORY.inverse().get(LAYOUT).size();
 
         int namingErrors = 0;
-        int documentErrors = 0;
+        int documentationErrors = 0;
         int layoutErrors = 0;
 
         for (String cat : failedCategories) {
             if (DOCUMENTATION.equals(cat)) {
                 documentationScore -= (100f / documentationCategories);
-                documentErrors++;
+                documentationErrors++;
             }
             if (NAMING.equals(cat)) {
                 namingScore -= (100f / namingCategories);
@@ -76,22 +83,23 @@ public class AuditScorer {
             }
         }
 
-        return builder
-                .withGrade(new Score(layoutScore,
-                        namingScore,
-                        documentationScore,
-                        weights,
-                        documentErrors,
-                        namingErrors,
-                        layoutErrors,
-                        documentationCategories,
-                        namingCategories,
-                        layoutCategories))
+        return Score.newBuilder()
+                .withDocumentationErrors(documentationErrors)
+                .withDocumentationRules(documentationCategories)
+                .withDocumentationScore(documentationScore)
+                .withLayoutErrors(layoutErrors)
+                .withLayoutScore(layoutScore)
+                .withLayoutRules(layoutCategories)
+                .withNamingErrors(namingErrors)
+                .withNamingRules(namingCategories)
+                .withNamingScore(namingScore)
+                .withWeights(weights)
                 .build();
     }
 
     /**
      * Projects the category of distinct broken Style Guide rules
+     *
      * @param report - a report
      * @return categories - the list of categories
      */
@@ -103,5 +111,4 @@ public class AuditScorer {
                 .map(r -> Iterables.getOnlyElement(RULE_TO_CATEGORY.get(r.substring(0, 3))))
                 .collect(Collectors.toList());
     }
-
 }
