@@ -199,6 +199,7 @@ public class CheckerCommand extends ConfiguredCommand<StylecheckerConfiguration>
         File outputFile = new File(
                 outputDirectory, "results.txt"
         );
+        // append to file if it already exists
         try (PrintWriter writer = new PrintWriter(new FileOutputStream(outputFile, true))) {
             writer.write("---------Marking Summary---------\r\n\r\n");
             writer.println(String.format("---------%s---------%n", report.getOriginalJarName()));
